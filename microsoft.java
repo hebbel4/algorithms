@@ -136,3 +136,57 @@ public class Solution {
         }
     }
 }
+
+54. Spiral Matrix
+public List<Integer> spiralOrder(int[][] matrix) {
+    List<Integer> result = new ArrayList<Integer>();
+    if (matrix == null || matrix.length == 0 || matrix[0].length == 0) return result;
+    int rs = 0;
+    int re = matrix.length - 1;
+    int cs = 0;
+    int ce = matrix[0].length - 1;
+    while (rs <= re && cs <= ce) {
+        for (int i = cs; i <= ce; i++) {
+            result.add(matrix[rs][i]);
+        }
+        rs++;
+        for (int i = rs; i <= re; i++) {
+            result.add(matrix[i][ce]);
+        }
+        ce--;
+        if (rs <= re && cs <= ce) {
+            for (int i = ce; i >= cs; i--) {
+                result.add(matrix[re][i]);
+            }
+        }
+        re--;
+        if (rs <= re && cs <= ce) {
+            for (int i = re; i >= rs; i--) {
+                result.add(matrix[i][cs]);
+            }
+        }
+        cs++;
+    }
+    return result;
+}
+
+171. Excel Sheet Column Number
+public int titleToNumber(String s) {
+    if (s == null || s.length() == 0) return 0;
+    int result = 0;
+    for (int i = 0; i < s.length(); i++) {
+        result = result * 26 + s.charAt(i) - 'A' + 1;
+    }
+    return result;
+}
+
+235. Lowest Common Ancestor of a Binary Search Tree
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    if (root == null) return null;
+    if (root == p || root == q) return root;
+    else if (root.val > p.val && root.val < q.val || root.val < p.val && root.val > q.val) return root;
+    else if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q);
+    else return lowestCommonAncestor(root.right, p, q);
+}
+
+200. Number of Islands
