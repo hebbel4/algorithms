@@ -190,3 +190,72 @@ public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
 }
 
 200. Number of Islands
+public int numIslands(char[][] grid) {
+    if (grid == null || grid.length == 0) return 0;
+    boolean[][] visited = new boolean[grid.length][grid[0].length];
+    int res = 0;
+    for (int i = 0; i < grid.length; i++) {
+        for (int j = 0; j < grid[0].length; j++) {
+            if (grid[i][j] == '1' && !visited[i][j]) {
+                helper(grid, i, j, visited);
+                res++;
+            }
+        }
+    }
+    return res;
+}
+private void helper(char[][] grid, int i , int j , boolean[][] visited) {
+    if (i < 0 || i > grid.length - 1 || j < 0 || j > grid[0].length - 1) return;
+    if (grid[i][j] == '0' || visited[i][j]) return;
+    visited[i][j] = true;
+    helper(grid, i - 1, j, visited);
+    helper(grid, i, j - 1, visited);
+    helper(grid, i + 1, j, visited);
+    helper(grid, i, j + 1, visited);
+}
+/* no extra space */
+public int numIslands(char[][] grid) {
+    if (grid == null || grid.length == 0) return 0;
+    int res = 0;
+    for (int i = 0; i < grid.length; i++) {
+        for (int j = 0; j < grid[0].length; j++) {
+            if (grid[i][j] == '1') {
+                helper(grid, i, j);
+                res++;
+            }
+        }
+    }
+    return res;
+}
+private void helper(char[][] grid, int i , int j) {
+    if (i < 0 || i > grid.length - 1 || j < 0 || j > grid[0].length - 1) return;
+    if (grid[i][j] == '0') return;
+    grid[i][j] = '0';
+    helper(grid, i - 1, j);
+    helper(grid, i, j - 1);
+    helper(grid, i + 1, j);
+    helper(grid, i, j + 1);
+}
+
+88. Merge Sorted Array
+public void merge(int[] nums1, int m, int[] nums2, int n) {
+    int ind = m + n - 1;
+    int i = m - 1;
+    int j = n - 1;
+    while (i >= 0 && j >= 0) {
+        if (nums1[i] > nums2[j]) nums1[ind--] = nums1[i--];
+        else nums1[ind--] = nums2[j--];
+    }
+    while (j >= 0) nums1[ind--] = nums2[j--];
+}
+
+236. Lowest Common Ancestor of a Binary Tree
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    if (root == null) return root;
+    if (root == p || root == q) return root;
+    TreeNode left = lowestCommonAncestor(root.left, p, q);
+    TreeNode right = lowestCommonAncestor(root.right, p, q);
+    if (left != null && right != null) return root;
+    else if (left != null) return left;
+    else return right;
+}
