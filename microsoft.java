@@ -344,3 +344,96 @@ public void rotate(int[][] matrix) {
         }
     }
 }
+
+1. Two Sum
+public int[] twoSum(int[] nums, int target) {
+    HashMap<Integer,Integer> map = new HashMap<>();
+    int[] res = new int[2];
+    for (int i = 0; i < nums.length; i++) {
+        if (map.containsKey(target - nums[i])) {
+            res[0] = i;
+            res[1] = map.get(target - nums[i]);
+            return res;
+        }
+        map.put(nums[i], i);
+    }
+    return res;
+
+}
+
+53. Maximum Subarray
+/* O(n) */
+public int maxSubArray(int[] nums) {
+    int[] dp = new int[nums.length]; //dp[i] means the max subarray ending with nums[i]
+    dp[0] = nums[0];
+    int max = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        dp[i] = Math.max(dp[i - 1] + nums[i], nums[i]);
+        max = Math.max(max, dp[i]);
+    }
+    return max;
+}
+/* divide and conquer */
+public int maxSubArray(int[] nums) {
+    if (nums == null || nums.length == 0) return 0;
+    return helper(nums, 0, nums.length - 1);
+}
+private int helper(int[] nums, int start, int end) {
+    if (start >= end) return nums[start];
+    int mid = start + (end - start) / 2;
+    int lmax = helper(nums, start, mid - 1);
+    int rmax = helper(nums, mid + 1, end);
+    int mmax = nums[mid];
+    int t = mmax;
+    for (int i = mid - 1; i >= start; i--) {
+        t += nums[i];
+        mmax = Math.max(t, mmax);
+    }
+    t = mmax;
+    for (int i = mid + 1; i <= end; i++) {
+        t += nums[i];
+        mmax = Math.max(mmax, t);
+    }
+    return Math.max(mmax, Math.max(lmax, rmax));
+}
+
+103. Binary Tree Zigzag Level Order Traversal
+public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+    List<List<Integer>> res = new ArrayList<>();
+    if (root == null) return res;
+    Queue<TreeNode> q1 = new LinkedList<>();
+    Queue<TreeNode> q2 = new LinkedList<>();
+    q1.add(root);
+    q2.add(root);
+    int level = 0;
+    int size = 0;
+    while (!q1.isEmpty() && !q2.isEmpty()) {
+        List<Integer> oneLevel = new ArrayList<>();
+        if (level % 2 == 0) {
+            size = q1.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode cur = q1.poll();
+                TreeNode nextLevel = q2.poll();
+                if (cur.left != null) q1.add(cur.left);
+                if (cur.right != null) q1.add(cur.right);
+                if (nextLevel.right != null) q2.add(nextLevel.right);
+                if (nextLevel.left != null) q2.add(nextLevel.left);
+                oneLevel.add(cur.val);
+            }
+        }else {
+            size = q2.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode cur = q2.poll();
+                TreeNode nextLevel = q1.poll();
+                if (cur.right != null) q2.add(cur.right);
+                if (cur.left != null) q2.add(cur.left);
+                if (nextLevel.left != null) q1.add(nextLevel.left);
+                if (nextLevel.right != null) q1.add(nextLevel.right);
+                oneLevel.add(cur.val);
+            }
+        }
+        level++;
+        res.add(oneLevel);
+    }
+    return res;
+}
