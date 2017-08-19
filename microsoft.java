@@ -259,3 +259,88 @@ public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
     else if (left != null) return left;
     else return right;
 }
+
+445. Add Two Numbers II
+/* reverse list */
+public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    ListNode n1 = reverse(l1);
+    ListNode n2 = reverse(l2);
+    ListNode dummy = new ListNode(0);
+    ListNode cur = dummy;
+    int carry = 0;
+    while (n1 != null || n2 != null) {
+        int d1 = n1 == null ? 0 : n1.val;
+        int d2 = n2 == null ? 0 : n2.val;
+        int sum = d1 + d2 + carry;
+        carry = sum > 9 ? 1 : 0;
+        ListNode next = new ListNode(sum % 10);
+        cur.next = next;
+        cur = cur.next;
+        if (n1 != null) n1 = n1.next;
+        if (n2 != null) n2 = n2.next;
+    }
+    if (carry == 1) {
+        ListNode n = new ListNode(1);
+        cur.next = n;
+    }
+    return reverse(dummy.next);
+
+}
+
+private ListNode reverse(ListNode head) {
+    ListNode pre = null;
+    ListNode cur = head;
+    while (cur != null) {
+        ListNode next = cur.next;
+        cur.next = pre;
+        pre = cur;
+        cur = next;
+    }
+    return pre;
+}
+/* without reverse */
+public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    Stack<Integer> stack1 = new Stack<>();
+    Stack<Integer> stack2 = new Stack<>();
+    while (l1 != null) {
+        stack1.push(l1.val);
+        l1 = l1.next;
+    }
+    while (l2 != null) {
+        stack2.push(l2.val);
+        l2 = l2.next;
+    }
+
+    int sum = 0;
+    ListNode head = new ListNode(0);
+
+    while(!stack1.isEmpty() || !stack2.isEmpty()){
+        if(!stack1.isEmpty()){
+            sum += stack1.pop();
+        }
+        if(!stack2.isEmpty()){
+            sum += stack2.pop();
+        }
+        ListNode next = new ListNode(sum / 10);
+        head.val = sum % 10;
+        next.next = head;
+        head = next;
+        sum /= 10;
+    }
+    return head.val == 0 ? head.next : head;
+}
+
+48. Rotate Image
+public void rotate(int[][] matrix) {
+    if (matrix == null || matrix.length == 0) return;
+    int m = matrix.length;
+    for (int i = 0; i < m / 2; i++) {
+        for (int j = i; j < m - i - 1; j++) {
+            int temp = matrix[i][j];
+            matrix[i][j] = matrix[m - j - 1][i];
+            matrix[m - j - 1][i] = matrix[m - i - 1][m - j - 1];
+            matrix[m - i - 1][m - j - 1] = matrix[j][m - i - 1];
+            matrix[j][m - i - 1] = temp;
+        }
+    }
+}
