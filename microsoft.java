@@ -511,3 +511,117 @@ public void sortColors(int[] nums) {
         }
     }
 }
+
+73. Set Matrix Zeroes
+public void setZeroes(int[][] matrix) {
+    if (matrix == null || matrix.length == 0 || matrix[0].length == 0) return;
+    boolean row = false;
+    boolean col = false;
+    for (int i = 0; i < matrix.length; i++) {
+        if (matrix[i][0] == 0) {
+            col = true;
+            break;
+        }
+    }
+    for (int j = 0; j < matrix[0].length; j++) {
+        if (matrix[0][j] == 0) {
+            row = true;
+            break;
+        }
+    }
+    for (int i = 1; i < matrix.length; i++) {
+        for (int j = 1; j < matrix[0].length; j++) {
+            if (matrix[i][j] == 0) {
+                matrix[i][0] = 0;
+                matrix[0][j] = 0;
+            }
+        }
+    }
+    for (int i = 1; i < matrix.length; i++) {
+        for (int j = 1; j < matrix[0].length; j++) {
+            if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+    if (row) {
+        for (int j = 0; j < matrix[0].length; j++) {
+            matrix[0][j] = 0;
+        }
+    }
+    if (col) {
+        for (int i = 0; i < matrix.length; i++) {
+            matrix[i][0] = 0;
+        }
+    }
+}
+
+218. The Skyline Problem
+class BuildingPoint implements Comparable<BuildingPoint> {
+    int x;
+    boolean isStart;
+    int height;
+
+    @Override
+    public int compareTo(BuildingPoint o) {
+        if (this.x != o.x) {
+            return this.x - o.x; //the lower x comes before
+        }
+        else {
+            if (this.isStart && o.isStart) {
+                return o.height - this.height; //if both of them are start, the higher height comes before
+            } else if (!this.isStart && !o.isStart) {
+                return this.height - o.height; //if both of them are end, the lower height comes before
+            } else if (this.isStart) {
+                return -1;
+            } else return 1;
+        }
+    }
+}
+public List<int[]> getSkyline(int[][] buildings) {
+    List<int[]> result = new ArrayList<>();
+    if (buildings == null || buildings.length == 0 || buildings[0].length == 0) {
+        return result;
+    }
+    BuildingPoint[] buildingpoints = new BuildingPoint[buildings.length * 2];
+    int index = 0;
+    for (int building[] : buildings) {
+        buildingpoints[index] = new BuildingPoint();
+        buildingpoints[index].x = building[0];
+        buildingpoints[index].isStart = true;
+        buildingpoints[index].height = building[2];
+
+        buildingpoints[index + 1] = new BuildingPoint();
+        buildingpoints[index + 1].x = building[1];
+        buildingpoints[index + 1].isStart = false;
+        buildingpoints[index + 1].height = building[2];
+        index += 2;
+    }
+    Arrays.sort(buildingpoints);
+    TreeMap<Integer, Integer> queue = new TreeMap<>();
+    queue.put(0, 1);
+    int preMax = 0;
+    for (BuildingPoint buildingP : buildingpoints) {
+        if (buildingP.isStart) {
+            queue.compute(buildingP.height, (key, value) -> {
+                if (value == null) {
+                    return 1;
+                }else return value + 1;
+            });
+        } else {
+            queue.compute(buildingP.height, (key, value) -> {
+                if (value == 1) {
+                    return null;
+                }else {
+                    return value - 1;
+                }
+            });
+        }
+        int currentMax = queue.lastKey();
+        if (preMax != currentMax) {
+            result.add(new int[]{buildingP.x, currentMax});
+            preMax = currentMax;
+        }
+    }
+    return result;
+}
