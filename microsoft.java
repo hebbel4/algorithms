@@ -437,3 +437,77 @@ public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
     }
     return res;
 }
+
+151. Reverse Words in a String
+public String reverseWords(String s) {
+    if (s == null || s.length() == 0) return "";
+    s = s.trim();
+    String[] strs = s.split("\\s+");
+    for (int i = 0; i < strs.length / 2; i++) {
+        String temp = strs[i];
+        strs[i] = strs[strs.length - i - 1];
+        strs[strs.length - i - 1] = temp;
+    }
+    StringBuilder res = new StringBuilder();
+    for (int i = 0; i < strs.length; i++) {
+        if (i != strs.length - 1) res.append(strs[i] + " ");
+        else res.append(strs[i]);
+    }
+    return res.toString();
+}
+
+116. Populating Next Right Pointers in Each Node
+/* recusive */
+public void connect(TreeLinkNode root) {
+    if (root == null) return;
+    if (root.left != null) root.left.next = root.right;
+    if (root.right != null) {
+        if (root.next != null) {
+            root.right.next = root.next.left;
+        }else {
+            root.right.next = null;
+        }
+    }
+    connect(root.left);
+    connect(root.right);
+}
+/* iterative */
+public void connect(TreeLinkNode root) {
+    if (root == null) return;
+    Queue<TreeLinkNode> queue = new LinkedList<>();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+        TreeLinkNode cur = queue.poll();
+        if (cur.left != null) {
+            cur.left.next = cur.right;
+            queue.add(cur.left);
+        }
+        if (cur.right != null) {
+            if (cur.next != null) cur.right.next = cur.next.left;
+            else cur.right.next = null;
+            queue.add(cur.right);
+        }
+    }
+}
+
+75. Sort Colors
+public void sortColors(int[] nums) {
+    if (nums == null || nums.length == 0) return;
+    int start = 0;
+    int end = nums.length - 1;
+    for (int i = 0; i <= end; i++) {
+        if (nums[i] == 0) {
+            int temp = nums[i];
+            nums[i] = nums[start];
+            nums[start] = temp;
+            start++;
+        }
+        if (nums[i] == 2) {
+            int temp = nums[i];
+            nums[i] = nums[end];
+            nums[end] = temp;
+            end--;
+            i--;
+        }
+    }
+}
