@@ -625,3 +625,81 @@ public List<int[]> getSkyline(int[][] buildings) {
     }
     return result;
 }
+
+297. Serialize and Deserialize Binary Tree
+// Encodes a tree to a single string.
+public String serialize(TreeNode root) {
+    if (root == null) {
+        return "";
+    }
+    StringBuilder res = new StringBuilder();
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    res.append(root.val + " ");
+    while (!queue.isEmpty()) {
+        TreeNode cur = queue.poll();
+        if (cur.left != null) {
+            queue.add(cur.left);
+            res.append(cur.left.val + " ");
+        }else {
+            res.append("n ");
+        }
+        if (cur.right != null) {
+            queue.add(cur.right);
+            res.append(cur.right.val + " ");
+        }else {
+            res.append("n ");
+        }
+    }
+    return res.toString();
+}
+
+// Decodes your encoded data to tree.
+public TreeNode deserialize(String data) {
+    if (data == null || data.length() == 0) return null;
+    String[] strs = data.split("\\s+");
+    if (strs[0] == "n") return null;
+    TreeNode root = new TreeNode(Integer.valueOf(strs[0]));
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    for (int i = 1; i < strs.length; i++) {
+        TreeNode cur = queue.poll();
+        if (!strs[i].equals("n")) {
+            TreeNode left = new TreeNode(Integer.valueOf(strs[i]));
+            cur.left = left;
+            queue.add(left);
+        }else {
+            cur.left = null;
+        }
+        i++;
+        if (!strs[i].equals("n")) {
+            TreeNode right = new TreeNode(Integer.valueOf(strs[i]));
+            cur.right = right;
+            queue.add(right);
+        }else {
+            cur.right = null;
+        }
+    }
+    return root;
+}
+
+238. Product of Array Except Self
+/* use extra space */
+public int[] productExceptSelf(int[] nums) {
+    if (nums == null || nums.length == 0) return new int[]{};
+    int[] fwd = new int[nums.length];
+    int[] bwd = new int[nums.length];
+    fwd[0] = 1;
+    bwd[nums.length - 1] = 1;
+    for (int i = 1; i < nums.length; i++) {
+        fwd[i] = fwd[i - 1] * nums[i - 1];
+    }
+    for (int i = nums.length - 2; i >= 0; i--) {
+        bwd[i] = bwd[i + 1] * nums[i + 1];
+    }
+    for (int i = 0; i < nums.length; i++) {
+        nums[i] = fwd[i] * bwd[i];
+    }
+    return nums;
+}
+/* constant space */
