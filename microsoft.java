@@ -703,3 +703,121 @@ public int[] productExceptSelf(int[] nums) {
     return nums;
 }
 /* constant space */
+public int[] productExceptSelf(int[] nums) {
+    if (nums == null || nums.length == 0) return new int[]{};
+    int[] res = new int[nums.length];
+    res[0] = 1;
+    for (int i = 1; i < nums.length; i++) {
+        res[i] = res[i - 1] * nums[i - 1];
+    }
+    int right = 1;
+    for (int i = nums.length - 1; i >= 0; i--) {
+        res[i] *= right;
+        right *= nums[i];
+    }
+    return res;
+}
+
+237. Delete Node in a Linked List
+public void deleteNode(ListNode node) {
+    if (node == null) return;
+    node.val = node.next.val;
+    node.next = node.next.next;
+}
+
+121. Best Time to Buy and Sell Stock
+public int maxProfit(int[] prices) {
+    if (prices == null || prices.length == 0) return 0;
+    int max = 0;
+    int min = prices[0];
+    for (int p : prices) {
+        min = Math.min(min, p);
+        max = Math.max(max, p - min);
+    }
+    return max;
+}
+
+168. Excel Sheet Column Title
+public String convertToTitle(int n) {
+    StringBuilder sb = new StringBuilder();
+    while (n > 0) {
+        n--;
+        sb.append((char)('A' + n % 26));
+        n /= 26;
+    }
+    return sb.reverse().toString();
+}
+
+141. Linked List Cycle
+/* hash table */
+public boolean hasCycle(ListNode head) {
+    Set<ListNode> set = new HashSet<>();
+    if (head == null) return false;
+    while (head != null) {
+        if (set.contains(head)) return true;
+        set.add(head);
+        head = head.next;
+    }
+    return false;
+}
+/* two pointers no extra space */
+public boolean hasCycle(ListNode head) {
+    if (head == null) return false;
+    ListNode slow = head;
+    ListNode fast = head;
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+
+13. Roman to Integer
+public int romanToInt(String s) {
+    if (s == null || s.length() == 0) return 0;
+    HashMap<Character, Integer> hm = new HashMap<>();
+    hm.put('M', 1000);
+    hm.put('D', 500);
+    hm.put('C', 100);
+    hm.put('L', 50);
+    hm.put('X', 10);
+    hm.put('V', 5);
+    hm.put('I', 1);
+    int sum = 0;
+    for (int i = 0; i < s.length(); i++) {
+        int val = hm.get(s.charAt(i));
+        if (i == s.length() - 1 || hm.get(s.charAt(i)) >= hm.get(s.charAt(i + 1))) sum += val;
+        else sum -= val;
+    }
+    return sum;
+}
+
+98. Validate Binary Search Tree
+/* recursion */
+public boolean isValidBST(TreeNode root) {
+    return helper(root, Long.MIN_VALUE, Long.MAX_VALUE);
+}
+
+private boolean helper(TreeNode root, long start, long end) {
+    if (root == null) return true;
+    if (root.val <= start || root.val >= end) return false;
+    return helper(root.left, start, root.val) && helper(root.right, root.val, end);
+}
+/* inorder traversal */
+public boolean isValidBST(TreeNode root) {
+    ArrayList<Integer> array = new ArrayList<>();
+    if (root == null) return true;
+    inorder(root, array);
+    for (int i = 1; i < array.size(); i++) {
+        if (array.get(i) <= array.get(i - 1)) return false;
+    }
+    return true;
+}
+
+private void inorder(TreeNode root, ArrayList<Integer> array) {
+    if (root == null) return;
+    inorder(root.left, array);
+    array.add(root.val);
+    inorder(root.right, array);
+}
