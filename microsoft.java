@@ -957,3 +957,56 @@ class LRUCache {
         }
     }
 }
+
+460. LFU Cache
+class LFUCache {
+    HashMap<Integer, Integer> values;
+    HashMap<Integer, Integer> counts;
+    HashMap<Integer, LinkedHashSet<Integer>> sameCount;
+    int capacity, minFreq;
+    public LFUCache(int capacity) {
+        values = new HashMap<>();
+        counts = new HashMap<>();
+        sameCount = new HashMap<>();
+        this.capacity = capacity;
+        minFreq = 1;
+        sameCount.put(1, new LinkedHashSet<>());
+    }
+
+    public int get(int key) {
+        if (!values.containsKey(key)) return -1;
+        else {
+            int curCount = counts.get(key);
+            counts.put(key, curCount + 1);
+            sameCount.get(curCount).remove(key);
+            if(curCount==minFreq && sameCount.get(curCount).size()==0)
+                minFreq++;
+            if (sameCount.get(curCount + 1) == null) {
+                LinkedHashSet<Integer> set = new LinkedHashSet<>();
+                set.add(key);
+                sameCount.put(curCount + 1, set);
+            }else {
+                sameCount.get(curCount + 1).add(key);
+            }
+            return values.get(key);
+        }
+    }
+
+    public void put(int key, int value) {
+        if (capacity <= 0) return;
+        if (!values.containsKey(key)) {
+            if (values.size() >= this.capacity) {
+                int evit = sameCount.get(minFreq).iterator().next();
+                sameCount.get(minFreq).remove(evit);
+                values.remove(evit);
+            }
+            values.put(key, value);
+            counts.put(key, 1);
+            minFreq = 1;
+            sameCount.get(1).add(key);
+        }else {
+            values.put(key, value);
+            get(key);
+        }
+    }
+}
