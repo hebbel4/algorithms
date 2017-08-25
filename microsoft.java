@@ -840,3 +840,120 @@ public boolean isValid(String s) {
     }
     return stack.isEmpty();
 }
+
+21. Merge Two Sorted Lists
+public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+    if (l1 == null && l2 == null) return null;
+    if (l1 == null) return l2;
+    if (l2 == null) return l1;
+    ListNode dummy = new ListNode(0);
+    ListNode dummyHead = dummy;
+    while (l1 != null && l2 != null) {
+        if (l1.val > l2.val) {
+            dummyHead.next = l2;
+            l2 = l2.next;
+        } else {
+            dummyHead.next = l1;
+            l1 = l1.next;
+        }
+        dummyHead = dummyHead.next;
+    }
+    if (l1 != null) dummyHead.next = l1;
+    if (l2 != null) dummyHead.next = l2;
+    return dummy.next;
+}
+
+174. Dungeon Game
+public int calculateMinimumHP(int[][] dungeon) {
+    if (dungeon == null || dungeon.length == 0 || dungeon[0].length == 0) return 0;
+    int row = dungeon.length;
+    int col = dungeon[0].length;
+    int[][] dp = new int[row][col];
+    dp[row - 1][col - 1] = Math.max(1, 1 - dungeon[row - 1][col - 1]);
+    for (int i = col - 2; i >= 0; i--) {
+        dp[row - 1][i] = Math.max(1, dp[row - 1][i+1] - dungeon[row - 1][i]);
+    }
+    for (int i = row - 2; i >= 0; i--) {
+        dp[i][col - 1] = Math.max(1, dp[i+1][col - 1] - dungeon[i][col - 1]);
+    }
+    for (int i = row - 2; i >= 0; i--) {
+        for (int j = col - 2; j >= 0; j--) {
+            int right = Math.max(1, dp[i][j+1] - dungeon[i][j]);
+            int down = Math.max(1, dp[i+1][j] - dungeon[i][j]);
+            dp[i][j] = Math.min(right, down);
+        }
+    }
+    return dp[0][0];
+}
+
+146. LRU Cache
+class LRUCache {
+    class Node {
+        int key;
+        int value;
+        Node pre;
+        Node next;
+        public Node (int key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    public void addToHead(Node node) {
+        node.next = head.next;
+        head.next.pre = node;
+        head.next = node;
+        node.pre = head;
+    }
+
+    public void deleteNode(Node node) {
+        node.pre.next = node.next;
+        node.next.pre = node.pre;
+    }
+
+    HashMap<Integer, Node> map;
+    int capacity, count;
+    Node head, tail;
+
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        map = new HashMap<>();
+        head = new Node(0, 0);
+        tail = new Node(0, 0);
+        head.next = tail;
+        tail.pre = head;
+        head.pre = null;
+        tail.next = null;
+        count = 0;
+    }
+
+    public int get(int key) {
+        if (!map.containsKey(key)) return -1;
+        else {
+            Node cur = map.get(key);
+            deleteNode(cur);
+            addToHead(cur);
+            return cur.value;
+        }
+    }
+
+    public void put(int key, int value) {
+        if (!map.containsKey(key)) {
+            Node cur = new Node(key, value);
+            map.put(key, cur);
+            if (count < this.capacity) {
+                count++;
+                addToHead(cur);
+            }else {
+                map.remove(tail.pre.key);
+                deleteNode(tail.pre);
+                addToHead(cur);
+            }
+        }else {
+            Node cur = map.get(key);
+            cur.value = value;
+            deleteNode(cur);
+            addToHead(cur);
+        }
+    }
+}
