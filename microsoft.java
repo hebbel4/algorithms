@@ -1010,3 +1010,222 @@ class LFUCache {
         }
     }
 }
+
+8. String to Integer (atoi)
+/* eg. +-2 */
+public int myAtoi(String str) {
+    if (str == null || str.length() == 0) return 0;
+    long res = 0;
+    int sign = 1;
+    int ind = 0;
+    str = str.trim();
+    if (str.charAt(0) == '+') {
+        ind++;
+    }
+    if (str.charAt(0) == '-') {
+        sign = -1;
+        ind++;
+    }
+    while (ind < str.length()) {
+        if (!Character.isDigit(str.charAt(ind))) {
+            return (int) res*sign;
+        }
+        res = res * 10 + str.charAt(ind) - '0';
+        if (sign == 1 && res > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
+        if (sign == -1 && (-1) * res < Integer.MIN_VALUE) {
+            return Integer.MIN_VALUE;
+        }
+        ind++;
+    }
+    return (int) res*sign;
+}
+
+2. Add Two Numbers
+public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    if (l1 == null && l2 == null) return null;
+    if (l1 == null) return l2;
+    if (l2 == null) return l1;
+    ListNode dummyHead = new ListNode(0);
+    ListNode dummy = dummyHead;
+    int carry = 0;
+    int sum = 0;
+    while (l1 != null || l2 != null) {
+        int d1 = (l1 == null) ? 0 : l1.val;
+        int d2 = (l2 == null) ? 0 : l2.val;
+        sum = d1 + d2 + carry;
+        carry = (sum > 9)? 1 : 0;
+        ListNode node = new ListNode(sum % 10);
+        dummy.next = node;
+        dummy = dummy.next;
+        sum /= 10;
+        if (l1 != null) l1 = l1.next;
+        if (l2 != null) l2 = l2.next;
+    }
+    if (sum > 0) {
+        ListNode tail = new ListNode(1);
+        dummy.next = tail;
+    }
+    return dummyHead.next;
+}
+/* recursion */
+public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+    int carry = 0;
+    return helper(l1, l2, carry);
+}
+
+private ListNode helper(ListNode l1, ListNode l2, int carry) {
+    if (l1 == null && l2 == null) {
+        if (carry == 0) return null;
+        else {
+            ListNode head = new ListNode(1);
+            return head;
+        }
+    }else if (l1 != null && l2 != null) {
+        int sum = l1.val + l2.val + carry;
+        carry = (sum > 9) ? 1:0;
+        ListNode head = new ListNode(sum % 10);
+        head.next = helper(l1.next, l2.next, carry);
+        return head;
+    }else if (l1 != null) {
+        int sum = l1.val + carry;
+        carry = (sum > 9)? 1:0;
+        ListNode head = new ListNode(sum % 10);
+        head.next = helper(l1.next, null, carry);
+        return head;
+    }else {
+        int sum = l2.val + carry;
+        carry = (sum > 9)? 1:0;
+        ListNode head = new ListNode(sum % 10);
+        head.next = helper(null, l2.next, carry);
+        return head;
+    }
+}
+
+112. Path Sum
+public boolean hasPathSum(TreeNode root, int sum) {
+    if (root == null) return false;
+    if (root.left == null && root.right == null && root.val == sum) return true;
+    return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
+}
+
+56. Merge Intervals
+public List<Interval> merge(List<Interval> intervals) {
+    List<Interval> res = new ArrayList<>();
+    if (intervals == null || intervals.size() == 0) {
+        return res;
+    }
+    intervals.sort((a, b) -> (a.start - b.start));
+    Interval last = intervals.get(0);
+    for (int i = 1; i < intervals.size(); i++) {
+        Interval cur = intervals.get(i);
+        if (cur.start <= last.end) {
+            if (cur.end > last.end) {
+                last.end = cur.end;
+            }
+        }else {
+            res.add(last);
+            last = cur;
+        }
+    }
+    res.add(last);
+    return res;
+}
+
+23. Merge k Sorted Lists
+public ListNode mergeKLists(ListNode[] lists) {
+    return partition(lists, 0, lists.length - 1);
+}
+private ListNode partition(ListNode[] lists, int start, int end) {
+    if (start > end) {
+        return null;
+    }else if (start == end) {
+        return lists[start];
+    }else {
+        int mid = start + (end - start) / 2;
+        ListNode left = partition(lists, start, mid);
+        ListNode right = partition(lists, mid + 1, end);
+        return merge(left, right);
+    }
+}
+private ListNode merge(ListNode n1, ListNode n2) {
+    if (n1 == null) return n2;
+    if (n2 == null) return n1;
+    if (n1.val < n2.val) {
+        n1.next = merge(n1.next, n2);
+        return n1;
+    }else {
+        n2.next = merge(n1, n2.next);
+        return n2;
+    }
+}
+
+213. House Robber II
+public int rob(int[] nums) {
+    if (nums.length == 1) return nums[0];
+    int n1 = helper(nums, 0, nums.length - 2);
+    int n2 = helper(nums, 1, nums.length - 1);
+    return Math.max(n1, n2);
+}
+private int helper(int[] nums, int start, int end) {
+    int rob = 0;
+    int notRob = 0;
+    for (int i = start; i <= end; i++) {
+        int temp = rob;
+        rob = notRob + nums[i];
+        notRob = Math.max(notRob, temp);
+    }
+    return Math.max(rob, notRob);
+}
+
+212. Word Search II
+class TrieNode {
+    String word;
+    TrieNode[] children = new TrieNode[26];
+}
+
+private TrieNode buildTrie(String[] strs) {
+    TrieNode root = new TrieNode();
+    for (String s : strs) {
+        TrieNode cur = root;
+        for (char c : s.toCharArray()) {
+            int i = c - 'a';
+            if (cur.children[i] == null) {
+                TrieNode temp = new TrieNode();
+                cur.children[i] = temp;
+            }
+            cur = cur.children[i];
+        }
+        cur.word = s;
+    }
+    return root;
+}
+
+private void dfs(char[][] board, int i, int j, TrieNode root, List<String> res){
+    char c = board[i][j];
+    int ind = c - 'a';
+    if (c == '#' || root.children[ind] == null) return;
+    root = root.children[ind];
+    if (root.word != null) {
+        res.add(root.word);
+        root.word = null;
+    }
+    board[i][j] = '#';
+    if (i < board.length - 1) dfs(board, i + 1, j, root, res);
+    if (i > 0) dfs(board, i - 1, j, root, res);
+    if (j < board[0].length - 1) dfs(board, i, j + 1, root, res);
+    if (j > 0) dfs(board, i, j - 1, root, res);
+    board[i][j] = c;
+}
+
+public List<String> findWords(char[][] board, String[] words) {
+    List<String> res = new ArrayList<>();
+    TrieNode root = buildTrie(words);
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            dfs(board, i, j, root, res);
+        }
+    }
+    return res;
+}
