@@ -1229,3 +1229,152 @@ public List<String> findWords(char[][] board, String[] words) {
     }
     return res;
 }
+
+33. Search in Rotated Sorted Array
+public int search(int[] nums, int target) {
+    if (nums == null || nums.length == 0) return -1;
+    int start = 0;
+    int end = nums.length - 1;
+    while (start + 1 < end) {
+        int mid = start + (end - start) / 2;
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] < nums[end]) {
+            if (target >= nums[mid] && target <= nums[end]) {
+                start = mid;
+            }else {
+                end = mid;
+            }
+        }else {
+            if (target >= nums[start] && target <= nums[mid]) {
+                end = mid;
+            }else {
+                start = mid;
+            }
+        }
+    }
+    if (nums[start] == target) return start;
+    if (nums[end] == target) return end;
+    return -1;
+}
+
+232. Implement Queue using Stacks
+class MyQueue {
+    Stack<Integer> stack1;
+    Stack<Integer> stack2;
+    /** Initialize your data structure here. */
+    public MyQueue() {
+        stack1 = new Stack<>();
+        stack2 = new Stack<>();
+    }
+
+    /** Push element x to the back of queue. */
+    public void push(int x) {
+        stack1.push(x);
+    }
+
+    /** Removes the element from in front of queue and returns that element. */
+    public int pop() {
+        if (!stack2.isEmpty()) {
+            return stack2.pop();
+        }else if (!stack1.isEmpty()) {
+            while (!stack1.isEmpty()) {
+                stack2.push(stack1.pop());
+            }
+            return stack2.pop();
+        }
+        else return -1;
+    }
+
+    /** Get the front element. */
+    public int peek() {
+        if (!stack2.isEmpty()) {
+            return stack2.peek();
+        }else if (!stack1.isEmpty()) {
+            while (!stack1.isEmpty()) {
+                stack2.push(stack1.pop());
+            }
+            return stack2.peek();
+        }
+        else return -1;
+    }
+
+    /** Returns whether the queue is empty. */
+    public boolean empty() {
+        return stack1.isEmpty() && stack2.isEmpty();
+    }
+}
+
+654. Maximum Binary Tree
+public TreeNode constructMaximumBinaryTree(int[] nums) {
+    if (nums == null || nums.length == 0) return null;
+    return helper(nums, 0, nums.length - 1);
+}
+private TreeNode helper(int[] nums, int s, int e) {
+    if (s > e) return null;
+    int maxInd = s;
+    int max = nums[s];
+    for (int i = s; i <= e; i++) {
+        if (nums[i] > max) {
+            max = nums[i];
+            maxInd = i;
+        }
+    }
+    TreeNode root = new TreeNode(max);
+    root.left = helper(nums, s, maxInd - 1);
+    root.right = helper(nums, maxInd + 1, e);
+    return root;
+}
+
+24. Swap Nodes in Pairs
+public ListNode swapPairs(ListNode head) {
+    ListNode dummy = new ListNode(0);
+    dummy.next = head;
+    ListNode pre = dummy;
+    while (head != null && head.next != null) {
+        ListNode temp = head.next.next;
+        head.next.next = pre.next;
+        pre.next = head.next;
+        head.next = temp;
+        pre = head;
+        head = temp;
+    }
+    return dummy.next;
+}
+/* recursion */
+public ListNode swapPairs(ListNode head) {
+    if (head == null || head.next == null) return head;
+    else{
+        ListNode left = head;
+        ListNode right = head.next;
+        ListNode temp = right.next;
+        right.next = left;
+        left.next = swapPairs(temp);
+        return right;
+    }
+}
+
+153. Find Minimum in Rotated Sorted Array
+public int findMin(int[] nums) {
+    if (nums == null || nums.length == 0) return -1;
+    int start = 0;
+    int end = nums.length - 1;
+    while (start + 1 < end) {
+        int mid = start + (end - start) / 2;
+        if (nums[mid] < nums[end]) {
+            end = mid;
+        }else start = mid;
+    }
+    if (nums[end] < nums[start]) return nums[end];
+    return nums[start];
+}
+
+191. Number of 1 Bits
+// you need to treat n as an unsigned value
+public int hammingWeight(int n) {
+    int ones = 0;
+    while (n != 0) {
+        ones += (n & 1);
+        n >>>= 1;
+    }
+    return ones;
+}
