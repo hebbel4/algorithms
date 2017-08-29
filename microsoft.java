@@ -1383,6 +1383,7 @@ public int hammingWeight(int n) {
 public double findMedianSortedArrays(int[] nums1, int[] nums2) {
     int total = nums1.length + nums2.length;
     if (total % 2 == 0) {
+        //k is not index, k = 1 means the first one(index = 0)!!!!!!
         return (
         findKth(nums1, 0, nums2, 0, total / 2) +
         findKth(nums1, 0, nums2, 0, total / 2 + 1)
@@ -1418,4 +1419,102 @@ private int findKth(int[] A, int indexA, int[] B, int indexB, int k) {
     }else {
         return findKth(A, indexA, B, indexB + k / 2, k - k / 2);
     }
+}
+
+102. Binary Tree Level Order Traversal
+public List<List<Integer>> levelOrder(TreeNode root) {
+    List<List<Integer>> res = new ArrayList<>();
+    if (root == null) return res;
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.offer(root);
+    int size = 0;
+    while (!queue.isEmpty()) {
+        size = queue.size();
+        List<Integer> lst = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            TreeNode cur = queue.poll();
+            if (cur.left != null) queue.offer(cur.left);
+            if (cur.right != null) queue.offer(cur.right);
+            lst.add(cur.val);
+        }
+        res.add(lst);
+    }
+    return res;
+}
+
+160. Intersection of Two Linked Lists
+/* hash table */
+public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+    HashSet<ListNode> set = new HashSet<>();
+    ListNode l1 = headA;
+    ListNode l2 = headB;
+    while (l1 != null || l2 != null) {
+        if (l1 != null && set.contains(l1)) return l1;
+        else set.add(l1);
+        if (l2 != null && set.contains(l2)) return l2;
+        else set.add(l2);
+        if (l1 != null) l1 = l1.next;
+        if (l2 != null) l2 = l2.next;
+    }
+    return null;
+}
+/* two pointer */
+public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+    if (headA == null || headB == null) return null;
+    ListNode a = headA;
+    ListNode b = headB;
+    while (a != b) {
+        a = a == null ? headB : a.next;
+        b = b == null ? headA : b.next;
+    }
+    return a;
+}
+
+189. Rotate Array
+/* O(k % nums.length) space */
+public void rotate(int[] nums, int k) {
+    if (nums == null || nums.length <= 1) return;
+    int step = k % nums.length;
+    int[] temp = new int[step];
+    for (int i = 0; i < step; i++) {
+        temp[i] = nums[nums.length - step + i];
+    }
+    for (int i = nums.length - step - 1; i >= 0; i--) {
+        nums[i + step] = nums[i];
+    }
+    for (int i = 0; i < step; i++) {
+        nums[i] = temp[i];
+    }
+}
+/* constant space */
+public void rotate(int[] nums, int k) {
+    if (nums == null || nums.length <= 1) return;
+    reverse(nums, 0, nums.length - k % nums.length - 1);
+    reverse(nums, nums.length - k % nums.length, nums.length - 1);
+    reverse(nums, 0, nums.length - 1);
+}
+
+private void reverse(int[] nums, int start, int end) {
+    while (start < end) {
+        int temp = nums[start];
+        nums[start] = nums[end];
+        nums[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+26. Remove Duplicates from Sorted Array
+public int removeDuplicates(int[] nums) {
+    if (nums == null || nums.length == 0) return 0;
+    int start = 1;
+    int pre = nums[0];
+    for (int i : nums) {
+        if (i != pre) {
+            nums[start] = i;
+            start++;
+            pre = i;
+        }
+    }
+    return start;
 }
