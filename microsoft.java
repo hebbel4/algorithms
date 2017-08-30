@@ -1554,3 +1554,54 @@ private void swap(int[] nums, int left, int right) {
     nums[left] = nums[right];
     nums[right] = temp;
 }
+
+106. Construct Binary Tree from Inorder and Postorder Traversal
+public TreeNode buildTree(int[] inorder, int[] postorder) {
+    if (inorder == null || inorder.length == 0 || postorder == null || postorder.length == 0) return null;
+    HashMap<Integer, Integer> map = new HashMap<>();
+    for (int i = 0 ; i < inorder.length; i++) {
+        map.put(inorder[i], i);
+    }
+    return helper(inorder, 0, inorder.length - 1, postorder, 0, postorder.length - 1, map);
+}
+private TreeNode helper(int[] inorder, int is, int ie, int[] postorder, int ps, int pe, HashMap<Integer, Integer> map) {
+    if (is > ie || ps > pe) return null;
+    TreeNode root = new TreeNode(postorder[pe]);
+    int index = map.get(postorder[pe]);
+    root.left = helper(inorder, is, index - 1, postorder, ps, ps + index - is - 1, map);
+    root.right = helper(inorder, index + 1, ie, postorder, ps + index - is, pe - 1, map);
+    return root;
+}
+
+5. Longest Palindromic Substring
+public String longestPalindrome(String s) {
+    if (s == null || s.length() == 0) return "";
+    int len = s.length();
+    int res = 0;
+    int left = 0;
+    int right = 0;
+    boolean[][] dp = new boolean[len][len];
+    for (int i = 0 ; i < len; i++) {
+        for (int j = 0 ; j < len; j++) {
+            if (j == i) dp[i][j] = true;
+        }
+    }
+    for (int i = 0; i < len; i++) {
+        for (int j = 0; j < i; j++) {
+            if (s.charAt(i) == s.charAt(j)) {
+                if (j + 1 == i) {
+                    dp[j][i] = true;
+                }
+                else {
+                    dp[j][i] = dp[j + 1][i - 1] == true? true : false;
+                }
+            }
+            if (dp[j][i] == true && res < i - j + 1) {
+                res = i - j + 1;
+                left = j;
+                right = i;
+            }
+        }
+    }
+    return s.substring(left, right + 1);
+}
