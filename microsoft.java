@@ -1518,3 +1518,39 @@ public int removeDuplicates(int[] nums) {
     }
     return start;
 }
+
+215. Kth Largest Element in an Array
+public int findKthLargest(int[] nums, int k) {
+    if (nums == null || nums.length == 0) return 0;
+    int left = 0;
+    int right = nums.length - 1;
+    while (true) {
+        int p = partition(nums, left, right);
+        if (p == k - 1) return nums[p];
+        else if (p < k - 1) {
+            left = p + 1;
+        }else right = p - 1;
+    }
+
+}
+private int partition(int[] nums, int left, int right) {
+    int pivot = nums[left];
+    int l = left + 1;
+    int r = right;
+    while (l <= r) {
+        if (nums[l] < pivot && nums[r] >= pivot) {
+            swap(nums, l, r);
+            l++;
+            r--;
+        }
+        if (nums[l] >= pivot) l++;
+        if (nums[r] < pivot) r--;
+    }
+    swap(nums, left, r);
+    return r;
+}
+private void swap(int[] nums, int left, int right) {
+    int temp = nums[left];
+    nums[left] = nums[right];
+    nums[right] = temp;
+}
