@@ -1605,3 +1605,165 @@ public String longestPalindrome(String s) {
     }
     return s.substring(left, right + 1);
 }
+
+204. Count Primes
+public int countPrimes(int n) {
+    int count = 0;
+    boolean[] notPrime = new boolean[n];
+    for (int i = 2; i < n; i++) {
+        if (notPrime[i] == false) {
+            count++;
+            for (int j = 2; i * j < n; j++) {
+                notPrime[j * i] = true;
+            }
+        }
+    }
+    return count;
+}
+
+173. Binary Search Tree Iterator
+public class BSTIterator {
+    TreeNode head;
+    Stack<TreeNode> stack = new Stack<>();
+    public BSTIterator(TreeNode root) {
+        head = root;
+    }
+
+    /** @return whether we have a next smallest number */
+    public boolean hasNext() {
+        return head != null || !stack.isEmpty();
+    }
+
+    /** @return the next smallest number */
+    public int next() {
+        while (head != null) {
+            stack.push(head);
+            head = head.left;
+        }
+        head = stack.pop();
+        TreeNode result = head;
+        head = head.right;
+        return result.val;
+    }
+}
+
+15. 3Sum
+public List<List<Integer>> threeSum(int[] nums) {
+    List<List<Integer>> res = new ArrayList<>();
+    if (nums == null || nums.length == 0) return res;
+    Arrays.sort(nums);
+    for (int i = 0; i < nums.length - 2; i++) {
+        if (i == 0 || nums[i] != nums[i - 1]) {
+            int left = i + 1;
+            int right = nums.length - 1;
+            while (left < right) {
+                List<Integer> lst = new ArrayList<>();
+                if (nums[i] + nums[left] + nums[right] == 0) {
+                    lst.add(nums[i]);
+                    lst.add(nums[left]);
+                    lst.add(nums[right]);
+                    res.add(lst);
+                    while (left < right && nums[left] == nums[left + 1]) {
+                        left++;
+                    }
+                    while (left < right && nums[right] == nums[right - 1]) {
+                        right--;
+                    }
+                    left++;
+                    right--;
+                }else if (nums[i] + nums[left] + nums[right] > 0) {
+                    right--;
+                }else left++;
+            }
+        }
+    }
+    return res;
+}
+
+25. Reverse Nodes in k-Group
+public ListNode reverseKGroup(ListNode head, int k) {
+    ListNode cur = head;
+    int cnt = 0;
+    while (cnt < k && cur != null) {
+        cur = cur.next;
+        cnt++;
+    }
+    if (cnt == k) {
+        cur = reverseKGroup(cur, k);
+        while (cnt > 0) {
+            ListNode temp = head.next;
+            head.next = cur;
+            cur = head;
+            head = temp;
+            cnt--;
+        }
+        head = cur;
+    }
+    return head;
+}
+
+387. First Unique Character in a String
+public int firstUniqChar(String s) {
+    if (s == null || s.length() == 0) return -1;
+    int[] arr = new int[26];
+    for (int i = 0; i < s.length(); i++) {
+        int ind = s.charAt(i) - 'a';
+        arr[ind]++;
+    }
+    for (int i = 0; i < s.length(); i++) {
+        int ind = s.charAt(i) - 'a';
+        if (arr[ind] == 1) return i;
+    }
+    return -1;
+}
+
+79. Word Search
+public boolean exist(char[][] board, String word) {
+    if (board == null || board.length == 0 || board[0].length == 0) return false;
+    boolean[][] visited = new boolean[board.length][board[0].length];
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            if (word.charAt(0) == board[i][j] && dfs(board, i, j, word, 0, visited)) return true;
+        }
+    }
+    return false;
+}
+private boolean dfs(char[][] board, int i, int j , String word, int index, boolean[][] visited) {
+    if (index == word.length()) return true;
+    if (i < 0 || i > board.length - 1 || j < 0 || j > board[0].length - 1 ||
+       visited[i][j]== true || word.charAt(index) != board[i][j]) {
+        return false;
+    }
+    visited[i][j] = true;
+    if (dfs(board, i + 1, j, word, index + 1, visited) || dfs(board, i - 1, j, word, index + 1, visited) ||
+        dfs(board, i, j + 1, word, index + 1, visited) || dfs(board, i, j - 1, word, index + 1, visited)) {
+        return true;
+    }
+    visited[i][j] = false;
+    return false;
+}
+/* no extra space */
+public boolean exist(char[][] board, String word) {
+    if (board == null || board.length == 0 || board[0].length == 0) return false;
+    for (int i = 0; i < board.length; i++) {
+        for (int j = 0; j < board[0].length; j++) {
+            if (word.charAt(0) == board[i][j] && dfs(board, i, j, word, 0)) return true;
+        }
+    }
+    return false;
+}
+private boolean dfs(char[][] board, int i, int j , String word, int index) {
+    if (index == word.length()) return true;
+    if (i < 0 || i > board.length - 1 || j < 0 || j > board[0].length - 1 ||
+       board[i][j]== '$' || word.charAt(index) != board[i][j]) {
+        return false;
+    }
+    char c = board[i][j];
+    board[i][j] = '$';
+    if (dfs(board, i + 1, j, word, index + 1) || dfs(board, i - 1, j, word, index + 1) ||
+        dfs(board, i, j + 1, word, index + 1) || dfs(board, i, j - 1, word, index + 1)) {
+        return true;
+    }
+    board[i][j] = c;
+    return false;
+}
