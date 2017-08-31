@@ -1767,3 +1767,149 @@ private boolean dfs(char[][] board, int i, int j , String word, int index) {
     board[i][j] = c;
     return false;
 }
+
+165. Compare Version Numbers
+public int compareVersion(String version1, String version2) {
+    String[] levels1 = version1.split("\\.");
+    String[] levels2 = version2.split("\\.");
+    int len = Math.max(levels1.length, levels2.length);
+    for (int i = 0; i < len; i++) {
+        int v1 = i < levels1.length ? Integer.valueOf(levels1[i]) : 0;
+        int v2 = i < levels2.length ? Integer.valueOf(levels2[i]) : 0;
+        if (v1 < v2) return -1;
+        if (v1 > v2) return 1;
+    }
+    return 0;
+}
+
+94. Binary Tree Inorder Traversal
+public List<Integer> inorderTraversal(TreeNode root) {
+    List<Integer> res = new ArrayList<>();
+    if (root == null) return res;
+    Stack<TreeNode> stack = new Stack<>();
+    while (root != null || !stack.isEmpty()) {
+        while (root != null) {
+            stack.push(root);
+            root = root.left;
+        }
+        root = stack.pop();
+        res.add(root.val);
+        root = root.right;
+    }
+    return res;
+}
+
+258. Add Digits
+/* naive and trivial */
+public int addDigits(int num) {
+    while (num / 10 > 0) {
+        int sum = 0;
+        while (num > 0) {
+            sum += num % 10;
+            num /= 10;
+        }
+        num = sum;
+    }
+    return num;
+}
+/* niubi */
+public int addDigits(int num) {
+    return (num - 1) % 9 + 1;
+}
+
+101. Symmetric Tree
+/* recursive */
+public boolean isSymmetric(TreeNode root) {
+    if (root == null) return true;
+    return helper(root.left, root.right);
+}
+private boolean helper(TreeNode t1, TreeNode t2) {
+    if (t1 == null && t2 == null) return true;
+    else if (t1 != null && t2 != null) {
+        if (t1.val == t2.val) {
+            return helper(t1.left, t2.right) && helper(t1.right, t2.left);
+        }else return false;
+    }else return false;
+}
+/* iterative */
+public boolean isSymmetric(TreeNode root) {
+    if (root == null) return true;
+    Queue<TreeNode> q1 = new LinkedList<>();
+    Queue<TreeNode> q2 = new LinkedList<>();
+    q1.add(root.left);
+    q2.add(root.right);
+    while (!q1.isEmpty() && !q2.isEmpty()) {
+        TreeNode n1 = q1.poll();
+        TreeNode n2 = q2.poll();
+        if (n1 != null && n2 == null || n1 == null && n2 != null) return false;
+        if (n1 != null && n2 != null) {
+            if (n1.val != n2.val) return false;
+            q1.add(n1.left);
+            q1.add(n1.right);
+            q2.add(n2.right);
+            q2.add(n2.left);
+        }
+    }
+    return true;
+}
+
+91. Decode Ways
+public int numDecodings(String s) {
+    if (s == null || s.length() == 0) return 0;
+    int len = s.length();
+    int[] dp = new int[len + 1];
+    dp[0] = 1;
+    for (int i = 1; i <= len; i++) {
+        if (s.charAt(i - 1) - '0' <= 9 && s.charAt(i - 1) - '0' >= 1) {
+            dp[i] = dp[i - 1];
+        }
+        if (s.charAt(i - 1) - '0' == 0) {
+            dp[i] = 0;
+        }
+        if (i >= 2 && (s.charAt(i - 2) - '0' == 1 || s.charAt(i - 2) - '0' == 2 && s.charAt(i - 1) - '0' <= 6)) {
+            dp[i] += dp[i - 2];
+        }
+    }
+    return dp[len];
+}
+
+28. Implement strStr()
+public int strStr(String haystack, String needle) {
+    if (haystack.length() < needle.length()) return -1;
+    if (needle.length() == 0) return 0;
+    for (int i = 0; i < haystack.length() - needle.length() + 1; i++) {
+        if (haystack.charAt(i) == needle.charAt(0)) {
+            int j = 0;
+            for (j = 0; j < needle.length(); j++) {
+                if (haystack.charAt(i + j) != needle.charAt(j)) break;
+            }
+            if (j == needle.length()) return i;
+        }
+    }
+    return -1;
+}
+
+162. Find Peak Element
+public int findPeakElement(int[] nums) {
+    if (nums == null || nums.length == 0) return -1;
+    int start = 0;
+    int end = nums.length - 1;
+    while (start + 1 < end) {
+        int mid = start + (end - start) / 2;
+        if (nums[mid] < nums[mid + 1]) {
+            start = mid;
+        }else {
+            end = mid;
+        }
+    }
+    if (nums[start] > nums[end]) return start;
+    return end;
+}
+/* linear time */
+public int findPeakElement(int[] nums) {
+    if (nums == null || nums.length == 0) return -1;
+    for (int i = 1; i < nums.length; i++) {
+        if (nums[i] < nums[i - 1]) return i - 1;
+    }
+    return nums.length - 1;
+}
