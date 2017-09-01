@@ -1913,3 +1913,50 @@ public int findPeakElement(int[] nums) {
     }
     return nums.length - 1;
 }
+
+125. Valid Palindrome
+public boolean isPalindrome(String s) {
+    s = s.replaceAll("[^A-Za-z0-9]", "");
+    s = s.toLowerCase();
+    int left = 0;
+    int right = s.length() - 1;
+    while (left <= right) {
+        if (s.charAt(left) != s.charAt(right)) return false;
+        left++;
+        right--;
+    }
+    return true;
+}
+
+124. Binary Tree Maximum Path Sum
+int max = Integer.MIN_VALUE;
+public int maxPathSum(TreeNode root) {
+    pathSum(root);
+    return max;
+}
+private int pathSum(TreeNode root) {
+    if (root == null) return 0;
+    int left = Math.max(0, pathSum(root.left));
+    int right = Math.max(0, pathSum(root.right));
+    max = Math.max(max, left + right + root.val);
+    return Math.max(left, right) + root.val;
+}
+
+300. Longest Increasing Subsequence
+public int lengthOfLIS(int[] nums) {
+    if(nums.length == 0){
+        return 0;
+    }
+    int[] dp = new int[nums.length];
+    Arrays.fill(dp, 1);
+    int max = 1;
+    for(int i = 0; i < nums.length; i++){
+        for(int j = 0; j < i; j++){
+            if(nums[i] > nums[j]){
+                dp[i] = Math.max(dp[i], dp[j] + 1);
+                max = Math.max(max, dp[i]);
+            }
+        }
+    }
+    return max;
+}
