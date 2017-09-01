@@ -1960,3 +1960,83 @@ public int lengthOfLIS(int[] nums) {
     }
     return max;
 }
+/* binary search
+Arrays.binarySearch() Returns: index of the search key, if it is contained in the array within the specified range;
+otherwise, (-(insertion point) - 1).
+The insertion point is defined as the point at which the key would be inserted into the array:
+the index of the first element in the range greater than the key,
+or toIndex if all elements in the range are less than the specified key.
+Note that this guarantees that the return value will be >= 0 if and only if the key is found. */
+public int lengthOfLIS(int[] nums) {
+    int[] dp = new int[nums.length];
+    int len = 0;
+    for (int i = 0; i < nums.length; i++) {
+        int ind = Arrays.binarySearch(dp, 0, len, nums[i]);
+        if (ind < 0) {
+            ind = - (ind + 1);
+        }
+        dp[ind] = nums[i];
+        if (ind == len) {
+            len++;
+        }
+    }
+    return len;
+}
+
+56. Merge Intervals
+public List<Interval> merge(List<Interval> intervals) {
+    List<Interval> res = new ArrayList<>();
+    if (intervals.size() == 0) return res;
+    Collections.sort(intervals, (a, b) -> (a.start - b.start));
+    Interval last = intervals.get(0);
+    for (int i = 1; i < intervals.size(); i++) {
+        Interval cur = intervals.get(i);
+        if (cur.end > last.end) {
+            if (cur.start > last.end) {
+                res.add(last);
+                last = cur;
+            }
+            else {
+                last.end = cur.end;
+            }
+        }
+    }
+    res.add(last);
+    return res;
+}
+
+112. Path Sum
+public boolean hasPathSum(TreeNode root, int sum) {
+    if (root == null) return false;
+    if (root.val == sum && root.left == null && root.right == null) return true;
+    return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
+}
+
+114. Flatten Binary Tree to Linked List
+/* recursive */
+public void flatten(TreeNode root) {
+    if (root == null) return;
+    flatten(root.left);
+    flatten(root.right);
+    TreeNode temp = root.right;
+    root.right = root.left;
+    root.left = null;
+    while (root.right != null) {
+        root = root.right;
+    }
+    root.right = temp;
+}
+/* iteration */
+public void flatten(TreeNode root) {
+    TreeNode cur = root;
+    while (cur != null) {
+        if (cur.left != null) {
+            TreeNode temp = cur.left;
+            while (temp.right != null) temp = temp.right;
+            temp.right = cur.right;
+            cur.right = cur.left;
+            cur.left = null;
+        }
+        cur = cur.right;
+    }
+}
