@@ -2040,3 +2040,73 @@ public void flatten(TreeNode root) {
         cur = cur.right;
     }
 }
+
+650. 2 Keys Keyboard
+public int minSteps(int n) {
+    int[] dp = new int[n + 1];
+    for (int i = 2; i <= n; i++) {
+        dp[i] = i;
+        for (int j = i - 1; j > 1; j--) {
+            if (i % j == 0) {
+                dp[i] = dp[j] + i / j;
+                break;
+            }
+        }
+    }
+    return dp[n];
+}
+
+567. Permutation in String
+public boolean checkInclusion(String s1, String s2) {
+    int[] arr = new int[26];
+    if (s1.length() > s2.length()) return false;
+    for (int i = 0; i < s1.length(); i++) {
+        arr[s1.charAt(i) - 'a']++;
+        arr[s2.charAt(i) - 'a']--;
+    }
+    if (allZero(arr)) return true;
+    for (int i = s1.length(); i < s2.length(); i++) {
+        arr[s2.charAt(i) - 'a']--;
+        arr[s2.charAt(i - s1.length()) - 'a']++;
+        if (allZero(arr)) return true;
+    }
+    return false;
+}
+private boolean allZero(int[] arr) {
+    for (int i = 0; i < arr.length; i++) {
+        if (arr[i] != 0) return false;
+    }
+    return true;
+}
+
+513. Find Bottom Left Tree Value
+public int findBottomLeftValue(TreeNode root) {
+    if (root == null) return 0;
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    int res = 0;
+    while (!queue.isEmpty()) {
+        int size = queue.size();
+        for (int i = 0; i < size; i++) {
+            TreeNode cur = queue.poll();
+            if (i == 0) res = cur.val;
+            if (cur.left != null) queue.add(cur.left);
+            if (cur.right != null) queue.add(cur.right);
+        }
+    }
+    return res;
+}
+
+452. Minimum Number of Arrows to Burst Balloons
+public int findMinArrowShots(int[][] points) {
+    if (points.length == 0) return 0;
+    Arrays.sort(points, (a, b) -> a[1] - b[1]);
+    int pos = points[0][1];
+    int count = 1;
+    for (int i = 1; i < points.length; i++) {
+        if (pos >= points[i][0]) continue;
+        count++;
+        pos = points[i][1];
+    }
+    return count;
+}

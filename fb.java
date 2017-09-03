@@ -45,3 +45,29 @@ public class Solution extends Reader4 {
         return n;
     }
 }
+
+282. Expression Add Operators
+public List<String> addOperators(String num, int target) {
+    List<String> res = new ArrayList<>();
+    dfs(num, "", 0, target, 0, 0, res);
+    return res;
+}
+private void dfs(String num, String op, int ind, int target, long curSum, long preSum, List<String> res) {
+    if (ind == num.length() && curSum == target) {
+        res.add(op);
+        return;
+    }else {
+        for (int i = ind; i < num.length(); i++) {
+            String temp = num.substring(ind, i + 1);
+            long l = Long.parseLong(temp);
+            if (op.isEmpty()) {
+                dfs(num, temp, i + 1, target, curSum + l, curSum, res);
+            }else {
+                dfs(num, op + "+" + temp, i + 1, target, curSum + l, curSum, res);
+                dfs(num, op + "-" + temp, i + 1, target, curSum - l, curSum, res);
+                dfs(num, op + "*" + temp, i + 1, target, (curSum - preSum) * l + preSum, preSum, res);
+            }
+            if (num.charAt(ind) == '0') return;
+        }
+    }
+}
