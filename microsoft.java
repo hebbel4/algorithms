@@ -2078,6 +2078,31 @@ private boolean allZero(int[] arr) {
     }
     return true;
 }
+/* sliding window */
+public boolean checkInclusion(String s1, String s2) {
+    int len1 = s1.length();
+    int len2 = s2.length();
+    if (len1 > len2) return false;
+    int[] map = new int[128];
+    for (char c : s1.toCharArray()) {
+        map[c]++;
+    }
+    int right = 0, left = 0, count = 0;
+    while (right < s2.length()) {
+        if (map[s2.charAt(right)] > 0) count++;
+        map[s2.charAt(right)]--;
+        right++;
+        while (count == s1.length()) {
+            if (right - left == count) {
+                return true;
+            }
+            map[s2.charAt(left)]++;
+            if (map[s2.charAt(left)] > 0) count--;
+            left++;
+        }
+    }
+    return false;
+}
 
 513. Find Bottom Left Tree Value
 public int findBottomLeftValue(TreeNode root) {
