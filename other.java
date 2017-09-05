@@ -27,3 +27,23 @@ public int largestRectangleArea(int[] heights) {
     }
     return max;
 }
+
+264. Ugly Number II
+class Solution {
+    public int nthUglyNumber(int n) {
+        int[] ugly = new int[n];
+        int[] ind = new int[3];
+        int[] primes = new int[] {2,3,5};
+        ugly[0] = 1;
+        for (int i = 1; i < n; i++) {
+            ugly[i] = Integer.MAX_VALUE;
+            for (int j = 0; j < 3; j++) {
+                ugly[i] = Math.min(ugly[i], ugly[ind[j]] * primes[j]);
+            }
+            for (int j = 0; j < 3; j++) {
+                if (ugly[i] == ugly[ind[j]] * primes[j]) ind[j]++;
+            }
+        }
+        return ugly[n - 1];
+    }
+}
