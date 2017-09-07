@@ -93,6 +93,28 @@ public RandomListNode copyRandomList(RandomListNode head) {
     }
     return newHead.next;
 }
+/* my solution */
+public class Solution {
+    public RandomListNode copyRandomList(RandomListNode head) {
+        if (head == null) return null;
+        RandomListNode newHead = new RandomListNode(head.label);
+        RandomListNode newCur = newHead;
+        RandomListNode cur = head;
+        while (cur != null) {
+            RandomListNode next = cur.next;
+            RandomListNode newNext = null;
+            if (next != null) newNext = new RandomListNode(next.label);
+            newCur.next = newNext;
+            RandomListNode random = cur.random;
+            RandomListNode newRandom = null;
+            if (random != null) newRandom = new RandomListNode(random.label);
+            newCur.random = newRandom;
+            newCur = newCur.next;
+            cur = cur.next;
+        }
+        return newHead;
+    }
+}
 
 419. Battleships in a Board
 public int countBattleships(char[][] board) {

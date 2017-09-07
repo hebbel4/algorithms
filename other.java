@@ -47,3 +47,31 @@ class Solution {
         return ugly[n - 1];
     }
 }
+
+623. Add One Row to Tree
+class Solution {
+    public TreeNode addOneRow(TreeNode root, int v, int d) {
+        if (d == 1) {
+            TreeNode t = new TreeNode(v);
+            t.left = root;
+            return t;
+        }
+        helper(root, v, d, 1);
+        return root;
+
+    }
+    private void helper(TreeNode root, int v, int d, int level) {
+        if (root == null) return;
+        if (level + 1 == d) {
+            TreeNode left = root.left;
+            TreeNode right = root.right;
+            root.left = new TreeNode(v);
+            root.right = new TreeNode(v);
+            root.left.left = left;
+            root.right.right = right;
+            return;
+        }
+        helper(root.left, v, d, level + 1);
+        helper(root.right, v, d, level + 1);
+    }
+}
