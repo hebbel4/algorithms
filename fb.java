@@ -71,3 +71,26 @@ private void dfs(String num, String op, int ind, int target, long curSum, long p
         }
     }
 }
+
+17. Letter Combinations of a Phone Number
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        String[] strs = new String[]{"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        List<String> res = new ArrayList<>();
+        if (digits.length() == 0) return res;
+        StringBuilder sbuilder = new StringBuilder();
+        helper(res, sbuilder, 0, digits, strs);
+        return res;
+    }
+    private void helper(List<String> res, StringBuilder part, int start, String digits, String[] strs) {
+        if (part.length() == digits.length()) res.add(part.toString());
+        else {
+            String s = strs[digits.charAt(start) - '2'];
+            for (int i = 0; i < s.length(); i++) {
+                part.append(s.charAt(i));
+                helper(res, part, start + 1, digits, strs);
+                part.setLength(part.length() - 1);
+            }
+        }
+    }
+}
