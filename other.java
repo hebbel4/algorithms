@@ -75,3 +75,40 @@ class Solution {
         helper(root.right, v, d, level + 1);
     }
 }
+
+148. Sort List
+class Solution {
+    public ListNode sortList(ListNode head) {
+        if (head == null || head.next == null) return head;
+        return partition(head);
+    }
+    private ListNode partition(ListNode head) {
+        if (head == null || head.next == null) return head;
+
+        ListNode slow = head;
+        ListNode fast = head;
+        ListNode prev = slow;
+
+        while(fast != null && fast.next != null){
+            prev = slow;
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        prev.next = null;
+        ListNode l = partition(head);
+        ListNode r = partition(slow);
+        return merge(l, r);
+    }
+    private ListNode merge(ListNode left, ListNode right) {
+        if (left == null) return right;
+        if (right == null) return left;
+        if (left.val < right.val) {
+            left.next = merge(left.next, right);
+            return left;
+        }else {
+            right.next = merge(left, right.next);
+            return right;
+        }
+    }
+}
