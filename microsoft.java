@@ -2208,3 +2208,26 @@ class TicTacToe {
         return 0;
     }
 }
+
+186. Reverse Words in a String II
+public class Solution {
+    public void reverseWords(char[] s) {
+        reverse(s, 0, s.length - 1);
+        int r = 0;
+        while (r < s.length) {
+            int l = r;
+            while (r < s.length && s[r] != ' ') {
+                r++;
+            }
+            reverse(s, l, r-1);
+            r++;
+        }
+    }
+    public void reverse(char[] chars, int start, int end) {
+        while (start < end) {
+            char temp = chars[start];
+            chars[start++] = chars[end];
+            chars[end--] = temp;
+        }
+    }
+}

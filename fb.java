@@ -122,3 +122,43 @@ class Solution {
         return dp[s.length()][p.length()];
     }
 }
+
+301. Remove Invalid Parentheses
+/* BFS */
+class Solution {
+    public List<String> removeInvalidParentheses(String s) {
+        List<String> res = new ArrayList<>();
+        if (s == null) return res;
+        Queue<String> queue = new LinkedList<>();
+        Set<String> set = new HashSet<>();
+        queue.add(s);
+        set.add(s);
+        boolean valid = false;
+        while (!queue.isEmpty()) {
+            s = queue.poll();
+            if (isValid(s)) {
+                res.add(s);
+                valid = true;
+            }
+            if (valid) continue;
+            for (int i = 0; i < s.length(); i++) {
+                if (s.charAt(i) != '(' && s.charAt(i) != ')') continue;
+                String t = s.substring(0, i) + s.substring(i + 1);
+                if (set.contains(t)) continue;
+                queue.add(t);
+                set.add(t);
+            }
+        }
+        return res;
+    }
+    public boolean isValid(String s) {
+        int cnt = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '(') cnt++;
+            else if (c == ')' && cnt == 0) return false;
+            else if (c == ')') cnt--;
+        }
+        return cnt == 0;
+    }
+}
+/* DFS */
