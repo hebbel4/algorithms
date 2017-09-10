@@ -38,3 +38,57 @@ class Solution {
         }
     }
 }
+
+280. Wiggle Sort
+/* sort */
+class Solution {
+    public void wiggleSort(int[] nums) {
+        if (nums.length == 0) return;
+        Arrays.sort(nums);
+        for (int i = 2; i < nums.length; i += 2) {
+            int temp = nums[i];
+            nums[i] = nums[i - 1];
+            nums[i - 1] = temp;
+        }
+    }
+}
+/* no sort */
+class Solution {
+    public void wiggleSort(int[] nums) {
+        if (nums.length == 0) return;
+        // when i is odd, nums[i] >= nums[i - 1], when i is even, nums[i] <= nums[i - 1]
+        for (int i = 1; i < nums.length; i++) {
+            if (i % 2 == 0) {
+                if (nums[i] > nums[i - 1]) {
+                    int temp = nums[i];
+                    nums[i] = nums[i - 1];
+                    nums[i - 1] = temp;
+                }
+            }else {
+                if (nums[i] < nums[i - 1]) {
+                    int temp = nums[i];
+                    nums[i] = nums[i - 1];
+                    nums[i - 1] = temp;
+                }
+            }
+        }
+    }
+}
+
+324. Wiggle Sort II
+class Solution {
+    public void wiggleSort(int[] nums) {
+        if (nums.length == 0) return;
+        int[] temp = Arrays.copyOf(nums, nums.length);
+        Arrays.sort(temp);
+        int a = (1 + nums.length) / 2 - 1;
+        int b = nums.length - 1;
+        for (int i = 0; i < nums.length; i++) {
+            if (i % 2 == 0) {
+                nums[i] = temp[a--];
+            }else {
+                nums[i] = temp[b--];
+            }
+        }
+    }
+}

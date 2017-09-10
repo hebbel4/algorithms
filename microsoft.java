@@ -459,6 +459,33 @@ public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
     }
     return res;
 }
+/* a simpler version */
+class Solution {
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) return res;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        boolean order = true;
+        while (!q.isEmpty()) {
+            List<Integer> lst = new ArrayList<>();
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode t = q.poll();
+                if (order) {
+                    lst.add(t.val);
+                }else {
+                    lst.add(0, t.val);
+                }
+                if (t.left != null) q.add(t.left);
+                if (t.right != null) q.add(t.right);
+            }
+            res.add(lst);
+            order = order ? false : true;
+        }
+        return res;
+    }
+}
 
 151. Reverse Words in a String
 public String reverseWords(String s) {
@@ -476,6 +503,27 @@ public String reverseWords(String s) {
         else res.append(strs[i]);
     }
     return res.toString();
+}
+/* another version */
+public class Solution {
+    public String reverseWords(String s) {
+        if (s.length() == 0) return "";
+        String[] strs = s.split("\\s+");
+        int start = 0;
+        int end = strs.length - 1;
+        while (start < end) {
+            String temp = strs[start];
+            strs[start++] = strs[end];
+            strs[end--] = temp;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String str : strs) {
+            sb.append(str + " ");
+        }
+        String res = sb.toString();
+        res = res.trim();
+        return res;
+    }
 }
 
 116. Populating Next Right Pointers in Each Node
@@ -517,6 +565,7 @@ public void sortColors(int[] nums) {
     if (nums == null || nums.length == 0) return;
     int start = 0;
     int end = nums.length - 1;
+    // trick : i <= end
     for (int i = 0; i <= end; i++) {
         if (nums[i] == 0) {
             int temp = nums[i];
@@ -530,6 +579,29 @@ public void sortColors(int[] nums) {
             nums[end] = temp;
             end--;
             i--;
+        }
+    }
+}
+/* while loop */
+class Solution {
+    public void sortColors(int[] nums) {
+        if (nums.length == 0) return;
+        int start = 0;
+        int end = nums.length - 1;
+        int index = 0;
+        while (index <= end) {
+            if (nums[index] == 0) {
+                nums[index] = nums[start];
+                nums[start] = 0;
+                start++;
+            }
+            if (nums[index] == 2) {
+                nums[index] = nums[end];
+                nums[end] = 2;
+                end--;
+                index--;
+            }
+            index++;
         }
     }
 }
