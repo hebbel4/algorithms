@@ -107,13 +107,18 @@ class Solution {
         }
         for (int i = 0; i < s.length(); i++) {
             for (int j = 0; j < p.length(); j++) {
+                //match
                 if (s.charAt(i) == p.charAt(j) || p.charAt(j) == '.') {
                     dp[i + 1][j + 1] = dp[i][j];
                 }
+                //not match but is *
                 else if (p.charAt(j) == '*') {
+                    //use * zero times
                     if (p.charAt(j - 1) != s.charAt(i) && p.charAt(j - 1) != '.') {
                         dp[i + 1][j + 1] = dp[i + 1][j - 1];
-                    }else {
+                    }
+                    //use * zero, one, more than one times
+                    else {
                         dp[i + 1][j + 1] = dp[i + 1][j - 1] || dp[i + 1][j] || dp[i][j + 1];
                     }
                 }
@@ -162,3 +167,133 @@ class Solution {
     }
 }
 /* DFS */
+
+
+
+477. Total Hamming Distance
+class Solution {
+    public int totalHammingDistance(int[] nums) {
+        if (nums.length == 0) return 0;
+        int total = 0;
+
+        for (int i = 0; i < 32; i++) {
+            int ones = 0;
+            for (int n : nums) {
+                n >>= i;
+                ones += n & 1;
+            }
+            total += ones * (nums.length - ones);
+        }
+        return total;
+    }
+
+}
+
+461. Hamming Distance
+class Solution {
+    public int hammingDistance(int x, int y) {
+        int cnt = 0;
+        for(int i = 0; i < 32; i++){
+            int xLastBit = x & 1;
+            int yLastBit = y & 1;
+            x >>= 1;
+            y >>= 1;
+            cnt += xLastBit ^ yLastBit;
+        }
+        return cnt;
+    }
+}
+
+283. Move Zeroes
+public class Solution {
+    public void moveZeroes(int[] nums) {
+        if (nums == null || nums.length == 0) return;
+        int ind = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != 0) {
+                nums[ind] = nums[i];
+                ind++;
+            }
+        }
+        for (int i = ind; i < nums.length; i++) {
+            nums[i] = 0;
+        }
+    }
+}
+class Solution {
+    public void moveZeroes(int[] nums) {
+        int j = 0;
+        for(int i = 0; i < nums.length; i++){
+            if(nums[i] != 0){
+                int temp = nums[j];
+                nums[j] = nums[i];
+                nums[i] = temp;
+                j++;
+            }
+        }
+    }
+}
+
+38. Count and Say
+public class Solution {
+    public String countAndSay(int n) {
+        StringBuilder res = new StringBuilder("1");
+        StringBuilder pre;
+        int count;
+        char say;
+        for (int i = 1; i < n; i++) {
+            pre = res;
+            res = new StringBuilder();
+            count = 1;
+            say = pre.charAt(0);
+            for (int j = 1; j < pre.length(); j++) {
+                if (pre.charAt(j) == say) {
+                    count++;
+                }else {
+                    res.append(count).append(say);
+                    count = 1;
+                    say = pre.charAt(j);
+                }
+            }
+            res.append(count).append(say);
+        }
+        return res.toString();
+    }
+}
+/* recursion */
+class Solution {
+    String s = "1";
+    public String countAndSay(int n) {
+        if (n <= 1) {
+            return s;
+        }
+        int ind = 0;
+        StringBuilder next = new StringBuilder();
+        while (ind < s.length()) {
+            int cnt = 0;
+            char c = s.charAt(ind);
+            while (ind < s.length() && s.charAt(ind) == c) {
+                cnt++;
+                ind++;
+            }
+            next.append(cnt).append(c);
+        }
+        s = next.toString();
+        return countAndSay(n - 1);
+    }
+}
+
+
+public class Solution {
+    public double myPow(double x, int n) {
+        if (n == 0) return 1;
+        if (n == 1) return x;
+        double t = myPow(x, n / 2);
+        if (n % 2 == 0) {
+            return t * t;
+        }else {
+            if (n > 0) return t * t * x;
+            else return t * t / x;
+        }
+    }
+}
