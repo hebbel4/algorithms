@@ -167,7 +167,30 @@ class Solution {
     }
 }
 /* DFS */
+class Solution {
+    public List<String> removeInvalidParentheses(String s) {
+    List<String> ans = new ArrayList<>();
+    remove(s, ans, 0, 0, new char[]{'(', ')'});
+    return ans;
+}
 
+    public void remove(String s, List<String> ans, int last_i, int last_j,  char[] par) {
+        for (int stack = 0, i = last_i; i < s.length(); ++i) {
+            if (s.charAt(i) == par[0]) stack++;
+            if (s.charAt(i) == par[1]) stack--;
+            if (stack >= 0) continue;
+            for (int j = last_j; j <= i; ++j)
+                if (s.charAt(j) == par[1] && (j == last_j || s.charAt(j - 1) != par[1]))
+                    remove(s.substring(0, j) + s.substring(j + 1, s.length()), ans, i, j, par);
+            return;
+        }
+        String reversed = new StringBuilder(s).reverse().toString();
+        if (par[0] == '(') // finished left to right
+            remove(reversed, ans, 0, 0, new char[]{')', '('});
+        else // finished right to left
+            ans.add(reversed);
+    }
+}
 
 
 477. Total Hamming Distance
@@ -283,7 +306,7 @@ class Solution {
     }
 }
 
-
+50. Pow(x, n)
 public class Solution {
     public double myPow(double x, int n) {
         if (n == 0) return 1;
@@ -295,5 +318,104 @@ public class Solution {
             if (n > 0) return t * t * x;
             else return t * t / x;
         }
+    }
+}
+
+139. Word Break
+public class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        //dp[i] 前i个字符能不能被完美划分
+        boolean[] dp = new boolean[s.length() + 1];
+        dp[0] = true;
+        for (int i = 0; i <= s.length(); i++) {
+            for (int j = 0; j < i; j++) {
+                if(dp[j] && wordDict.contains(s.substring(j, i))) {
+                    dp[i] = true;
+                    break;//break不break都行
+                }
+            }
+        }
+        return dp[s.length()];
+    }
+}
+
+325. Maximum Size Subarray Sum Equals k
+class Solution {
+    public int maxSubArrayLen(int[] nums, int k) {
+        //key->sum value->index
+        //no need to worry duplicate key since we need to get max length, same sum will only record the smallest index
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int sum = 0;
+        int max = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            if (sum == k) max = Math.max(max, i + 1);
+            else if (map.containsKey(sum - k)) {
+                max = Math.max(max, i - map.get(sum - k));
+            }
+            if (!map.containsKey(sum)) map.put(sum, i);
+        }
+        return max;
+    }
+}
+
+67. Add Binary
+class Solution {
+    public String addBinary(String a, String b) {
+        StringBuilder res = new StringBuilder();
+        int indA = a.length() - 1;
+        int indB = b.length() - 1;
+        int carry = 0;
+        while(indA >= 0 || indB >= 0){
+            int intA = 0;
+            int intB = 0;
+            if(indA >= 0){
+                intA += a.charAt(indA) - '0';
+                indA--;
+            }
+            if(indB >= 0){
+                intB += b.charAt(indB) - '0';
+                indB--;
+            }
+            int sum = intA + intB + carry;
+            carry = sum / 2;
+            res.insert(0, sum % 2);
+
+        }
+        if (carry != 0) {
+            res.insert(0, 1);
+        }
+        return res.toString();
+    }
+}
+
+341. Flatten Nested List Iterator
+public class NestedIterator implements Iterator<Integer> {
+
+    Stack<NestedInteger> stack;
+    public NestedIterator(List<NestedInteger> nestedList) {
+        stack = new Stack<>();
+        for (int i = nestedList.size() - 1; i >= 0; i--) {
+            stack.push(nestedList.get(i));
+        }
+    }
+
+    @Override
+    public Integer next() {
+        NestedInteger n = stack.pop();
+        return n.getInteger();
+    }
+
+    @Override
+    public boolean hasNext() {
+        while (!stack.isEmpty()) {
+            NestedInteger n = stack.peek();
+            if (n.isInteger()) return true;
+            stack.pop();
+            for (int i = n.getList().size() - 1; i >= 0; i--) {
+                stack.push(n.getList().get(i));
+            }
+        }
+        return false;
     }
 }
