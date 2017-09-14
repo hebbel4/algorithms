@@ -419,3 +419,91 @@ public class NestedIterator implements Iterator<Integer> {
         return false;
     }
 }
+
+621. Task Scheduler
+class Solution {
+    class Node {
+        char c;
+        int cnt;
+        public Node (char c, int cnt) {
+            this.c = c;
+            this.cnt = cnt;
+        }
+    }
+    public int leastInterval(char[] tasks, int n) {
+        int[] map = new int[26];
+        for (char c : tasks) {
+            map[c - 'A']++;
+        }
+        PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> (b.cnt - a.cnt));
+        for (int i = 0; i < 26; i++) {
+            Node node = new Node((char)('A' + i), map[i]);
+            pq.add(node);
+        }
+        int module = 1;
+        int count = pq.poll().cnt;
+        while (pq.peek().cnt == count) {
+            module++;
+            pq.poll();
+        }
+        //(TopFreq - 1) * (n + 1) + moduleLength
+        return Math.max((count - 1) * (n + 1) + module, tasks.length);
+    }
+}
+
+311. Sparse Matrix Multiplication
+class Solution {
+    public int[][] multiply(int[][] A, int[][] B) {
+        int aRow = A.length;
+        int aCol = A[0].length;
+        int bRow = B.length;
+        int bCol = B[0].length;
+        //aCol = bRow, so make a matrix of aRow and bCol
+        int[][] resMatrix = new int[aRow][bCol];
+        if (A.length == 0 || A[0].length == 0 || B.length == 0 || B[0].length == 0) return resMatrix;
+        //C[i][j]是怎么来的，起始是A[i][0]*B[0][j] + A[i][1]*B[1][j] + ... + A[i][k]*B[k][j]
+        for (int i = 0; i < aRow; i++) {
+            for (int k = 0; k < bRow; k++) {
+                if (A[i][k] != 0) {
+                    for (int j = 0; j < bCol; j++){
+                        if (B[k][j] != 0)
+                            resMatrix[i][j] += A[i][k] * B[k][j];
+                    }
+                }
+            }
+        }
+        return resMatrix;
+    }
+}
+
+252. Meeting Rooms
+class Solution {
+    public boolean canAttendMeetings(Interval[] intervals) {
+        if (intervals.length == 0) return true;
+        Arrays.sort(intervals, (a, b) -> (a.start - b.start));
+        for (int i = 1; i < intervals.length; i++) {
+            if (intervals[i].start < intervals[i - 1].end) return false;
+        }
+        return true;
+    }
+}
+
+253. Meeting Rooms II
+class Solution {
+    public int minMeetingRooms(Interval[] intervals) {
+        if (intervals.length == 0) return 0;
+        Arrays.sort(intervals, (a, b) -> (a.start - b.start));
+        PriorityQueue<Interval> pq = new PriorityQueue<>((a, b) -> (a.end - b.end));
+        pq.add(intervals[0]);
+        for (int i = 1; i < intervals.length; i++) {
+            Interval cur = pq.poll();
+            if (intervals[i].start >= cur.end) {
+                cur.end = intervals[i].end;
+            }else {
+                pq.add(intervals[i]);
+            }
+            pq.add(cur);
+        }
+        return pq.size();
+    }
+}
