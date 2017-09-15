@@ -650,3 +650,63 @@ class Solution {
         }
     }
 }
+
+26. Remove Duplicates from Sorted Array
+class Solution {
+    public int removeDuplicates(int[] nums) {
+        if (nums.length == 0) return 0;
+        int len = 1;
+        int start = 1;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] != nums[i - 1]) {
+                len++;
+                nums[start] = nums[i];
+                start++;
+            }
+        }
+        return len;
+    }
+}
+
+285. Inorder Successor in BST
+class Solution {
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if(root == null)
+            return null;
+
+        return binarySearch(root, p);
+    }
+
+    private TreeNode binarySearch(TreeNode root, TreeNode p) {
+        if(root == null)
+            return null;
+
+        if(root.val <= p.val)
+            return binarySearch(root.right, p);
+
+        TreeNode candidate = binarySearch(root.left, p);
+        return candidate == null ? root : candidate;
+    }
+}
+/* very slow solution... */
+class Solution {
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        Stack<TreeNode> stack = new Stack<>();
+        List<TreeNode> lst = new ArrayList<>();
+        while (root != null || !stack.isEmpty()) {
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            TreeNode cur = stack.pop();
+            lst.add(cur);
+            root = cur.right;
+        }
+        for (int i = 0; i < lst.size(); i++) {
+            if (lst.get(i).val == p.val && i != lst.size() - 1) {
+                return lst.get(i + 1);
+            }
+        }
+        return null;
+    }
+}
