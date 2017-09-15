@@ -73,6 +73,7 @@ private void dfs(String num, String op, int ind, int target, long curSum, long p
 }
 
 17. Letter Combinations of a Phone Number
+/* DFS */
 class Solution {
     public List<String> letterCombinations(String digits) {
         String[] strs = new String[]{"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
@@ -92,6 +93,102 @@ class Solution {
                 part.setLength(part.length() - 1);
             }
         }
+    }
+}
+/* Similar DFS */
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        String[] strs = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        List<String> res = new ArrayList<>();
+        if (digits.length() == 0) return res;
+        helper(res, strs, digits, 0, new StringBuilder());
+        return res;
+    }
+    private void helper(List<String> res, String[] strs, String digits, int start, StringBuilder part) {
+        if (part.length() == digits.length()) {
+            res.add(part.toString());
+            return;
+        }
+        for (int i = start; i < digits.length(); i++) {
+            String s = strs[digits.charAt(i) - '0'];
+            for (int j = 0; j < s.length(); j++) {
+                part.append(s.charAt(j));
+                helper(res, strs, digits, i + 1, part);
+                part.setLength(part.length() - 1);
+            }
+        }
+    }
+}
+/* BFS */
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        List<String> res = new ArrayList<>();
+        if(digits.length() == 0){
+            return res;
+        }
+
+        String[] letters = new String[]{"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+        Queue<String> q = new LinkedList<>();
+        q.offer("");
+        int ind = 0;
+
+        while(ind < digits.length()){
+            int size = q.peek().length();
+
+            while(q.peek().length() == size){
+                String cur = q.poll();
+
+                for(char c : letters[digits.charAt(ind) - '0'].toCharArray()){
+                    q.offer(cur + Character.toString(c));
+                }
+            }
+            ind++;
+        }
+
+        for(String str : q){
+            res.add(str);
+        }
+
+        return res;
+    }
+}
+/* Similar BFS */
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        List<String> res = new ArrayList<>();
+        if(digits.length() == 0){
+            return res;
+        }
+
+        String[] letters = new String[]{" ", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+        Queue<StringBuilder> q = new LinkedList<>();
+        q.offer(new StringBuilder());
+        int ind = 0;
+
+        while(!q.isEmpty()){
+            StringBuilder sb = q.peek();
+            if (ind == digits.length()) {
+                res.add(sb.toString());
+                q.poll();
+                continue;
+            }
+
+            int size = sb.length();
+            while (q.peek().length() == size){
+                StringBuilder copy = q.poll();
+                for (int i = 0; i < letters[digits.charAt(ind) - '0'].length(); i++) {
+                    StringBuilder copy2 = new StringBuilder(copy);
+                    copy2.append(letters[digits.charAt(ind) - '0'].charAt(i));
+                    q.add(copy2);
+                }
+            }
+            ind++;
+
+        }
+
+        return res;
     }
 }
 
@@ -505,5 +602,51 @@ class Solution {
             pq.add(cur);
         }
         return pq.size();
+    }
+}
+
+90. Subsets II
+/* iterative */
+class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        res.add(new ArrayList<Integer>());
+        int startIndex = 0;
+        int size = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (i >= 1 && nums[i] == nums[i - 1]) {
+                startIndex = size;
+            }else {
+                startIndex = 0;
+            }
+            size = res.size();
+            for (int j = startIndex; j < size; j++) {
+                List<Integer> temp = new ArrayList<>(res.get(j));
+                temp.add(nums[i]);
+                res.add(temp);
+            }
+        }
+        return res;
+    }
+}
+/* recursive */
+class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        helper(res, new ArrayList<>(), nums, 0);
+        return res;
+    }
+    private void helper(List<List<Integer>> res, List<Integer> lst, int[] nums, int start) {
+        List<Integer> temp = new ArrayList<>(lst);
+        res.add(temp);
+        for (int i = start; i < nums.length; i++) {
+            if (i == start || nums[i] != nums[i - 1]) {
+                temp.add(nums[i]);
+                helper(res, temp, nums, i + 1);
+                temp.remove(temp.size() - 1);
+            }
+        }
     }
 }
