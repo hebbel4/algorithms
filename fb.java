@@ -688,6 +688,29 @@ class Solution {
         return candidate == null ? root : candidate;
     }
 }
+/* get successor */
+class Solution {
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if (root == null) return null;
+        if (root.val <= p.val) {
+            return inorderSuccessor(root.right, p);
+        }
+        TreeNode left = inorderSuccessor(root.left, p);
+        return left != null ? left : root;
+    }
+}
+/* get predecessor */
+public TreeNode predecessor(TreeNode root, TreeNode p) {
+  if (root == null)
+    return null;
+
+  if (root.val >= p.val) {
+    return predecessor(root.left, p);
+  } else {
+    TreeNode right = predecessor(root.right, p);
+    return (right != null) ? right : root;
+  }
+}
 /* very slow solution... */
 class Solution {
     public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
@@ -708,5 +731,47 @@ class Solution {
             }
         }
         return null;
+    }
+}
+
+314. Binary Tree Vertical Order Traversal
+class Solution {
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) return res;
+        Queue<TreeNode> q = new LinkedList<>();
+        Queue<Integer> cols = new LinkedList<>();
+        //key: cols value: lst
+        Map<Integer, ArrayList<Integer>> map = new HashMap<>();
+        q.add(root);
+        cols.add(0);
+        int min = 0;
+        int max = 0;
+
+        while (!q.isEmpty()) {
+            TreeNode cur = q.poll();
+            int col = cols.poll();
+
+            if (!map.containsKey(col)) {
+                map.put(col, new ArrayList<>());
+            }
+            map.get(col).add(cur.val);
+
+            if (cur.left != null) {
+                q.add(cur.left);
+                cols.add(col - 1);
+                min = Math.min(min, col - 1);
+            }
+            if (cur.right != null) {
+                q.add(cur.right);
+                cols.add(col + 1);
+                max = Math.max(max, col + 1);
+            }
+
+        }
+        for (int i = min; i <= max; i++) {
+            res.add(map.get(i));
+        }
+        return res;
     }
 }
