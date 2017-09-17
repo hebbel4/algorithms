@@ -1,3 +1,14 @@
+/*
+StringBuffer has the same methods as the StringBuilder, but each method in StringBuffer
+is synchronized that is StringBuffer is thread safe.
+
+Due to this it does not allow two threads to simultaneously access the same method.
+Each method can be accessed by one thread at a time.
+
+But being thread safe has disadvantages too as the performance of the StringBuffer hits
+due to thread safe property. Thus StringBuilder is faster than the StringBuffer when
+calling the same methods of each class.
+*/
 84. Largest Rectangle in Histogram
 public int largestRectangleArea(int[] heights) {
     Stack<Integer> stack = new Stack<>();

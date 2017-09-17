@@ -775,3 +775,204 @@ class Solution {
         return res;
     }
 }
+
+277. Find the Celebrity
+/* 用一个一位数组做标记 */
+public class Solution extends Relation {
+    public int findCelebrity(int n) {
+        boolean[] peoples = new boolean[n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == j) continue;
+                if (knows(i, j) || !knows(j, i)) {
+                    peoples[i] = false;
+                    break;
+                }else {
+                    peoples[i] = true;
+                }
+            }
+            if (peoples[i]) return i;
+        }
+        return -1;
+    }
+}
+/* without boolean array */
+public class Solution extends Relation {
+    public int findCelebrity(int n) {
+        for (int i = 0; i < n; i++) {
+            int j;
+            for (j = 0; j < n; j++) {
+                if (i != j && (knows(i, j) || !knows(j, i))) break;
+            }
+            if (j == n) return i;
+        }
+        return -1;
+    }
+}
+/* a popular solution */
+public class Solution extends Relation {
+    public int findCelebrity(int n) {
+        int res = 0;
+        for (int i = 0; i < n; i++) {
+            if (knows(res, i)) res = i;
+        }
+        for (int i = 0; i < n; i++) {
+            if (res != i && (knows(res, i) || !knows(i, res))) return -1;
+        }
+        return res;
+    }
+}
+
+257. Binary Tree Paths
+class Solution {
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> res = new ArrayList<>();
+        if (root == null) return res;
+        helper(res, root, "");
+        return res;
+    }
+    private void helper(List<String> res, TreeNode root, String s) {
+        if (root.left == null && root.right == null) {
+            res.add(s + root.val);
+        }
+        if (root.left != null) {
+            helper(res, root.left, s + root.val + "->");
+        }
+        if (root.right != null) {
+            helper(res, root.right, s + root.val + "->");
+        }
+    }
+}
+/* use stringbuilder */
+class Solution {
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> res = new ArrayList<>();
+        if (root == null) return res;
+        helper(res, root, new StringBuilder());
+        return res;
+    }
+    private void helper(List<String> res, TreeNode root, StringBuilder s) {
+        int len = s.length();
+        s.append(root.val);
+        if (root.left == null && root.right == null) {
+            res.add(s.toString());
+        }else {
+            s.append("->");
+        }
+        if (root.left != null) {
+            helper(res, root.left, s);
+        }
+        if (root.right != null) {
+            helper(res, root.right, s);
+        }
+        s.setLength(len);
+    }
+}
+/* without helper function */
+class Solution {
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> paths = new ArrayList<>();
+        if (root == null) return paths;
+        if (root.left == null && root.right == null) {
+            paths.add(root.val + "");
+            return paths;
+        }
+        for (String s : binaryTreePaths(root.left)) {
+            paths.add(root.val + "->" + s);
+        }
+        for (String s : binaryTreePaths(root.right)) {
+            paths.add(root.val + "->" + s);
+        }
+        return paths;
+    }
+}
+
+140. Word Break II
+/* regular DFS but time limit exceed */
+class Solution {
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        List<String> res = new ArrayList<>();
+        if (s.length() == 0) return res;
+        helper(res, 0, s, "", wordDict);
+        return res;
+    }
+    private void helper(List<String> res, int start, String s, String part, List<String> wordDict) {
+        if (start == s.length()) {
+            part = part.trim();
+            res.add(part);
+            return;
+        }
+        for (int i = start; i < s.length(); i++) {
+            String temp = s.substring(start, i + 1);
+            if (wordDict.contains(temp)) {
+                helper(res, i + 1, s, part + temp + " ", wordDict);
+            }
+        }
+    }
+}
+/* memorized DFS */
+class Solution {
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        return helper(s, wordDict, new HashMap<String, List<String>>());
+    }
+    private List<String> helper(String s, List<String> wordDict, HashMap<String, List<String>> map) {
+        if (map.containsKey(s)) {
+            return map.get(s);
+        }
+        List<String> res = new ArrayList<>();
+        if (s.length() == 0) {
+            //must have res.add("")
+            res.add("");
+            return res;
+        }
+        for (String word : wordDict) {
+            if (s.startsWith(word)) {
+                List<String> subLst = helper(s.substring(word.length()), wordDict, map);
+                for (String sub : subLst) {
+                    res.add(word + (sub.length() == 0 ? "" : " ") + sub);
+                }
+            }
+        }
+        map.put(s, res);
+        return res;
+    }
+}
+
+
+class Solution {
+    public String minWindow(String s, String t) {
+        int len1 = t.length();
+        int len2 = s.length();
+        if (len1 > len2) return "";
+        int[] arr = new int[256];
+        for (int i = 0; i < len1; i++) {
+            arr[t.charAt(i)]++;
+        }
+        int right = 0, left = 0, cnt = 0, len = Integer.MAX_VALUE;
+        String res = "";
+
+        while (right < s.length()) {
+            arr[s.charAt(right)]--;
+            if(arr[s.charAt(right)] >= 0){
+                cnt++;
+            }
+            right++;
+
+            while(cnt == t.length()){
+                if(right - left < len){
+                    len = right - left;
+                    res = s.substring(left, right);
+                }
+                arr[s.charAt(left)]++;
+
+                if(arr[s.charAt(left)] > 0){
+                    cnt--;
+                }
+                left++;
+            }
+
+        }
+        return res;
+    }
+
+}
