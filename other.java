@@ -213,3 +213,59 @@ class Solution {
         return numberSeen && numberAfterE;
     }
 }
+
+349. Intersection of Two Arrays
+/* O(n) */
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        if (nums1.length == 0 || nums2.length == 0) return new int[]{};
+        HashSet<Integer> set1 = new HashSet<>();
+        HashSet<Integer> set2 = new HashSet<>();
+        for (int i : nums1) {
+            set1.add(i);
+        }
+        for (int i : nums2) {
+            if (set1.contains(i)) {
+                set2.add(i);
+            }
+        }
+        int[] res = new int[set2.size()];
+        int ind = 0;
+        for (int i : set2) {
+            res[ind] = i;
+            ind++;
+        }
+        return res;
+    }
+}
+/* two poiners O(nlogn) */
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        if (nums1.length == 0 || nums2.length == 0) return new int[]{};
+        int i = 0;
+        int j = 0;
+        Set<Integer> set = new HashSet<>();
+        while (i < nums1.length || j < nums2.length) {
+            int n1 = i < nums1.length ? nums1[i] : Integer.MAX_VALUE;
+            int n2 = j < nums2.length ? nums2[j] : Integer.MAX_VALUE;
+            if (n1 < n2) {
+                i++;
+            }
+            else if (n1 > n2) {
+                j++;
+            }else {
+                set.add(nums1[i]);
+                i++;
+                j++;
+            }
+        }
+        int[] res = new int[set.size()];
+        int index = 0;
+        for (int num : set) {
+            res[index++] = num;
+        }
+        return res;
+    }
+}
