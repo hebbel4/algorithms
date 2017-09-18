@@ -447,7 +447,7 @@ class Solution {
         for (int i = 0; i < nums.length; i++) {
             sum += nums[i];
             if (sum == k) max = Math.max(max, i + 1);
-            else if (map.containsKey(sum - k)) {
+            if (map.containsKey(sum - k)) {
                 max = Math.max(max, i - map.get(sum - k));
             }
             if (!map.containsKey(sum)) map.put(sum, i);
@@ -970,9 +970,186 @@ class Solution {
                 }
                 left++;
             }
-
         }
         return res;
     }
+}
 
+161. One Edit Distance
+class Solution {
+    public boolean isOneEditDistance(String s, String t) {
+        for (int i = 0; i < Math.min(s.length(), t.length()); i++) {
+            if (s.charAt(i) != t.charAt(i)) {
+                if (s.length() == t.length()) {
+                    return s.substring(i+1).equals(t.substring(i+1));
+                }else {
+                    if (s.length() > t.length()) {
+                        return s.substring(i+1).equals(t.substring(i));
+                    }
+                    else return s.substring(i).equals(t.substring(i+1));
+                }
+            }
+        }
+        return Math.abs(s.length() - t.length()) == 1;
+    }
+}
+
+127. Word Ladder
+/* BFS */
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Queue<String> q = new LinkedList<>();
+        q.add(beginWord);
+        q.add(null);
+
+        Set<String> visited = new HashSet<>();
+        visited.add(beginWord);
+
+        int level = 1;
+
+        Set<String> dict = new HashSet<>();
+        for (String s : wordList) {
+            dict.add(s);
+        }
+        if (!dict.contains(endWord)) return 0;
+
+        while (!q.isEmpty()) {
+            String cur = q.poll();
+
+            if (cur != null) {
+                char[] chars = cur.toCharArray();
+                for (int i = 0; i < cur.length(); i++) {
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        char old = chars[i];
+                        chars[i] = c;
+                        String altered = new String(chars);
+
+                        if (altered.equals(endWord) && dict.contains(altered)) {
+                            return level + 1;
+                        }
+
+                        if (dict.contains(altered) && !visited.contains(altered)) {
+                            visited.add(altered);
+                            q.add(altered);
+                        }
+                        chars[i] = old;
+                    }
+                }
+            }else {
+                level++;
+
+                if (!q.isEmpty()) {
+                    q.add(null);
+                }
+            }
+        }
+        return 0;
+    }
+}
+/* without adding null to mark level */
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Queue<String> q = new LinkedList<>();
+        q.add(beginWord);
+
+        Set<String> visited = new HashSet<>();
+        visited.add(beginWord);
+
+        int level = 1;
+
+        Set<String> dict = new HashSet<>();
+        for (String s : wordList) {
+            dict.add(s);
+        }
+        if (!dict.contains(endWord)) return 0;
+
+        while (!q.isEmpty()) {
+            int size = q.size();
+            for (int j = 0; j < size; j++) {
+                String cur = q.poll();
+
+                char[] chars = cur.toCharArray();
+                for (int i = 0; i < cur.length(); i++) {
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        char old = chars[i];
+                        chars[i] = c;
+                        String altered = new String(chars);
+
+                        if (altered.equals(endWord) && dict.contains(altered)) {
+                            return level + 1;
+                        }
+
+                        if (dict.contains(altered) && !visited.contains(altered)) {
+                            visited.add(altered);
+                            q.add(altered);
+                        }
+                        chars[i] = old;
+                    }
+                }
+            }
+
+            level++;
+        }
+        return 0;
+    }
+}
+/* two-end set */
+class Solution {
+
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+
+        if (!wordList.contains(endWord)) {
+            return 0;
+        }
+
+        Set<String> beginSet = new HashSet<>();
+        Set<String> endSet = new HashSet<>();
+        beginSet.add(beginWord);
+        endSet.add(endWord);
+
+        Set<String> visited = new HashSet<>();
+
+        Set<String> wordSet = new HashSet<>();
+        for (String str : wordList) {
+            wordSet.add(str);
+        }
+
+        int len = 1;
+
+        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+            if (beginSet.size() > endSet.size()) {
+                Set<String> set = beginSet;
+                beginSet = endSet;
+                endSet = set;
+            }
+
+            Set<String> temp = new HashSet<String>();
+            for (String word : beginSet) {
+                char[] chars = word.toCharArray();
+
+                for (int i = 0; i < chars.length; i++) {
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        char old = chars[i];
+                        chars[i] = c;
+                        String target = String.valueOf(chars);
+
+                        if (endSet.contains(target)) {
+                            return len + 1;
+                        }
+
+                        if (!visited.contains(target) && wordSet.contains(target)) {
+                            temp.add(target);
+                            visited.add(target);
+                        }
+                        chars[i] = old;
+                    }
+                }
+            }
+
+            beginSet = temp;
+            len++;
+        }
+
+        return 0;
+    }
 }

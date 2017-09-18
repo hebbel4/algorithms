@@ -92,3 +92,24 @@ class Solution {
         }
     }
 }
+
+133. Clone Graph
+public class Solution {
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        Map<Integer, UndirectedGraphNode> map = new HashMap<Integer, UndirectedGraphNode>();
+        return clone(node, map);
+
+    }
+    private UndirectedGraphNode clone(UndirectedGraphNode node, Map<Integer, UndirectedGraphNode> map) {
+        if (node == null) return null;
+        if (map.containsKey(node.label)) {
+            return map.get(node.label);
+        }
+        UndirectedGraphNode cloned = new UndirectedGraphNode(node.label);
+        map.put(cloned.label, cloned);
+        for (UndirectedGraphNode u : node.neighbors) {
+            cloned.neighbors.add(clone(u, map));
+        }
+        return cloned;
+    }
+}
