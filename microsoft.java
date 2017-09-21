@@ -2303,3 +2303,60 @@ public class Solution {
         }
     }
 }
+
+270. Closest Binary Search Tree Value
+/* inorder traversal */
+class Solution {
+    public int closestValue(TreeNode root, double target) {
+        Stack<TreeNode> stack = new Stack<>();
+        double min = Double.MAX_VALUE;
+        int res = 0;
+        while (!stack.isEmpty() || root != null) {
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            TreeNode cur = stack.pop();
+            if (Math.abs(cur.val - target) <= min) {
+                min = Math.abs(cur.val - target);
+                res = cur.val;
+            }
+            root = cur.right;
+        }
+        return res;
+    }
+}
+/* BST 特性 */
+class Solution {
+    public int closestValue(TreeNode root, double target) {
+        int res = root.val;
+        while (root != null) {
+            if (Math.abs(root.val - target) < Math.abs(res - target)) {
+                res = root.val;
+            }
+            root = target < root.val? root.left : root.right;
+        }
+        return res;
+    }
+}
+
+333. Largest BST Subtree
+/* O(n^2) */
+class Solution {
+    public int largestBSTSubtree(TreeNode root) {
+        if (root == null) return 0;
+        if (isValid(root, Integer.MIN_VALUE, Integer.MAX_VALUE)) return count(root);
+        return Math.max(largestBSTSubtree(root.left), largestBSTSubtree(root.right));
+    }
+
+    private boolean isValid(TreeNode root, int start, int end) {
+        if (root == null) return true;
+        if (root.val <= start || root.val >= end) return false;
+        return isValid(root.left, start, root.val) && isValid(root.right, root.val, end);
+    }
+
+    private int count(TreeNode root) {
+        if (root == null) return 0;
+        return count(root.left) + count(root.right) + 1;
+    }
+}

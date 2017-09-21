@@ -113,3 +113,130 @@ public class Solution {
         return cloned;
     }
 }
+
+490. The Maze
+/* dfs */
+class Solution {
+    int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    public boolean hasPath(int[][] maze, int[] start, int[] destination) {
+        if (maze.length == 0 || maze[0].length == 0) return false;
+        boolean[][] visited = new boolean[maze.length][maze[0].length];
+        return dfs(maze, visited, start[0], start[1], destination);
+    }
+    private boolean dfs(int[][] maze, boolean[][] visited, int i, int j, int[] dest) {
+        if (visited[i][j]) return false;
+        if (i == dest[0] && j == dest[1]) return true;
+        visited[i][j] = true;
+
+        for (int[] dir : directions) {
+            int[] newSpot = roll(maze, i, j, dir);
+            if (dfs(maze, visited, newSpot[0], newSpot[1], dest)) return true;
+        }
+        return false;
+
+    }
+    private int[] roll (int[][] maze, int i, int j, int[] dir) {
+        while (canRoll(maze, i + dir[0], j + dir[1])) {
+            i += dir[0];
+            j += dir[1];
+        }
+        return new int[]{i, j};
+    }
+    private boolean canRoll(int[][] maze, int i , int j) {
+        if (i < 0 || i >= maze.length || j < 0 || j >= maze[0].length || maze[i][j] == 1) return false;
+        return true;
+    }
+}
+/* bfs */
+class Solution {
+    public boolean hasPath(int[][] maze, int[] start, int[] destination) {
+        if (maze.length == 0 || maze[0].length == 0) return false;
+        Queue<int[]> q = new LinkedList<>();
+        q.add(start);
+        int[][] directions = new int[][] {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        boolean[][] visited = new boolean[maze.length][maze[0].length];
+        visited[start[0]][start[1]] = true;
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int x = cur[0];
+            int y = cur[1];
+            for (int[] dir : directions) {
+                int xx = x;
+                int yy = y;
+                while (xx + dir[0] >= 0 && xx + dir[0] < maze.length && yy + dir[1] >= 0 && yy + dir[1] < maze[0].length && maze[xx+dir[0]][yy+dir[1]] == 0) {
+                    xx += dir[0];
+                    yy += dir[1];
+                }
+
+                if (visited[xx][yy]) continue;
+                visited[xx][yy] = true;
+                if (xx == destination[0] && yy == destination[1]) return true;
+                q.add(new int[]{xx, yy});
+
+            }
+        }
+        return false;
+    }
+}
+
+505. The Maze II
+/* dfs */
+class Solution {
+    int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    public int shortestDistance(int[][] maze, int[] start, int[] destination) {
+        if (maze.length == 0 || maze[0].length == 0) return -1;
+        int[][] dist = new int[maze.length][maze[0].length];
+        dist[start[0]][start[1]] = 1;
+        dfs(maze, start[0], start[1], destination, dist);
+        return dist[destination[0]][destination[1]] - 1;
+    }
+    private void dfs(int[][] maze, int i, int j, int[] dest, int[][] dist) {
+        if (i == dest[0] && j == dest[1]) return;
+        for (int[] dir : directions) {
+            int ii = i;
+            int jj = j;
+            int len = dist[i][j];
+            while (ii + dir[0] >= 0 && ii + dir[0] < maze.length && jj + dir[1] >= 0 && jj + dir[1] < maze[0].length && maze[ii + dir[0]][jj + dir[1]] == 0) {
+                ii += dir[0];
+                jj += dir[1];
+                len++;
+            }
+            if (dist[ii][jj] > 0 && len >= dist[ii][jj]) continue;
+            dist[ii][jj] = len;
+            dfs(maze, ii, jj, dest, dist);
+
+        }
+
+    }
+}
+/* BFS */
+class Solution {
+    int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    public int shortestDistance(int[][] maze, int[] start, int[] destination) {
+        if (maze.length == 0 || maze[0].length == 0) return -1;
+        int[][] dist = new int[maze.length][maze[0].length];
+        dist[start[0]][start[1]] = 1;
+        Queue<int[]> q = new LinkedList<>();
+        q.add(start);
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int i = cur[0];
+            int j = cur[1];
+            for (int[] dir : directions) {
+                int ii = i;
+                int jj = j;
+                int len = dist[ii][jj];
+                while (ii + dir[0] >= 0 && ii + dir[0] < maze.length && jj + dir[1] >= 0 && jj + dir[1] < maze[0].length && maze[ii + dir[0]][jj + dir[1]] == 0) {
+                    ii += dir[0];
+                    jj += dir[1];
+                    len++;
+                }
+                if (dist[ii][jj] > 0 && len >= dist[ii][jj]) continue;
+                dist[ii][jj] = len;
+                q.add(new int[]{ii, jj});
+            }
+        }
+        return dist[destination[0]][destination[1]] - 1;
+
+    }
+}
