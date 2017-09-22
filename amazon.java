@@ -18,3 +18,16 @@ class Solution {
         return root.val + sum(root.left) + sum(root.right);
     }
 }
+
+617. Merge Two Binary Trees
+class Solution {
+    public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
+        if (t1 == null && t2 == null) return null;
+        if (t1 == null) return t2;
+        if (t2 == null) return t1;
+        TreeNode added = new TreeNode(t1.val + t2.val);
+        added.left = mergeTrees(t1.left, t2.left);
+        added.right = mergeTrees(t1.right, t2.right);
+        return added;
+    }
+}

@@ -269,3 +269,39 @@ class Solution {
         return res;
     }
 }
+
+check whether a graph is Bipartite
+/* graph is represented as adjacency matrix
+only works for strongly-connected graph, if graph is not connected, repeatedly call
+this method on all not yet visited vertices
+time complexity is V^2, if represented as adjacency list, O(V + E)
+*/
+public boolean isBipartite(int[][] G, int src) {
+    int V = G.length;
+    int[] colorArr = new int[V];
+    //-1: not assigned color, 1: first color 0: second color
+    for (int i = 0; i < V; i++) {
+        colorArr[i] = -1;
+    }
+    Queue<Integer> queue = new LinkedList<>();
+    queue.add(src);
+
+    while (!queue.isEmpty()) {
+        int cur = queue.poll();
+
+        //check if it's self loop
+        if (colorArr[cur] == 1) return false;
+
+        for (int v = 0; v < V; v++) {
+            if (G[cur][v] == 1 && colorArr[v] == -1) {
+                colorArr[v] = 1 - colorArr[cur];
+                queue.add(v);
+            }
+            if (G[cur][v] == 1 && colorArr[v] == colorArr[cur]) {
+                return false;
+            }
+        }
+    }
+    return true;
+
+}
