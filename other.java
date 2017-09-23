@@ -305,3 +305,115 @@ public boolean isBipartite(int[][] G, int src) {
     return true;
 
 }
+
+51. N-Queens
+class Solution {
+    class Position {
+        int row;
+        int col;
+        public Position(int r, int c) {
+            row = r;
+            col = c;
+        }
+    }
+    public List<List<String>> solveNQueens(int n) {
+        List<List<String>> res = new ArrayList<>();
+        Position[] positions = new Position[n];
+        helper(res, positions, 0, n);
+        return res;
+    }
+    public void helper(List<List<String>> res, Position[] positions, int row, int n) {
+        if (row == n) {
+            List<String> lst = new ArrayList<>();
+            for (Position p : positions) {
+                StringBuilder s = new StringBuilder();
+                for (int i = 0; i < n; i++) {
+                    if (p.col == i) {
+                        s.append("Q");
+                    }
+                    else {
+                        s.append(".");
+                    }
+                }
+                lst.add(s.toString());
+            }
+            res.add(lst);
+            return ;
+        }
+        for (int col = 0; col < n; col++) {
+            boolean foundSafe = true;
+            for (int queen = 0; queen < row; queen++) {
+                if (positions[queen].col == col || positions[queen].row - positions[queen].col == row - col || positions[queen].row + positions[queen].col == row + col) {
+                    foundSafe = false;
+                    break;
+                }
+            }
+            if (foundSafe) {
+                Position newp = new Position(row, col);
+                positions[row] = newp;
+                helper(res, positions, row + 1, n);
+            }
+
+        }
+
+    }
+}
+
+52. N-Queens II
+/* use hashset */
+class Solution {
+    public int totalNQueens(int n) {
+        HashSet<Integer> cols = new HashSet<>();
+        HashSet<Integer> diag = new HashSet<>();
+        HashSet<Integer> antiDiag = new HashSet<>();
+        return check(0, 0, cols, diag, antiDiag, n);
+    }
+    public int check(int count, int row, HashSet<Integer> cols, HashSet<Integer> diag, HashSet<Integer> anti, int n) {
+        for (int col = 0; col < n; col++) {
+            if (cols.contains(col)) continue;
+            if (diag.contains(row - col)) continue;
+            if (anti.contains(row + col)) continue;
+            if (row == n - 1) count++;
+            else {
+                cols.add(col);
+                diag.add(row - col);
+                anti.add(row + col);
+                count = check(count, row + 1, cols, diag, anti, n);
+                cols.remove(col);
+                diag.remove(row - col);
+                anti.remove(row + col);
+            }
+
+        }
+        return count;
+    }
+}
+/* use boolean[] faster than set */
+class Solution {
+    public int totalNQueens(int n) {
+        boolean[] cols = new boolean[n];
+        boolean[] diag = new boolean[n * 2];
+        boolean[] anti = new boolean[n * 2];
+        return check(0, 0, n, cols, diag, anti);
+    }
+    public int check(int count, int row, int n, boolean[] cols, boolean[] diag, boolean[] anti) {
+        for (int col = 0; col < n; col++) {
+            int diagnal = col - row + n;
+            int antidiagnal = row + col;
+            if (cols[col] || diag[diagnal] || anti[antidiagnal]) continue;
+            if (row == n - 1) {
+                count++;
+            }else {
+                cols[col] = true;
+                diag[diagnal] = true;
+                anti[antidiagnal] = true;
+                count = check(count, row + 1, n, cols, diag, anti);
+                cols[col] = false;
+                diag[diagnal] = false;
+                anti[antidiagnal] = false;
+            }
+
+        }
+        return count;
+    }
+}
