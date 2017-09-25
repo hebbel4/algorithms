@@ -240,3 +240,34 @@ class Solution {
 
     }
 }
+
+31. Next Permutation
+class Solution {
+    public void nextPermutation(int[] nums) {
+        if (nums.length == 0) return;
+        for (int i = nums.length - 1; i > 0; i--) {
+            if (nums[i] > nums[i - 1]) {
+                for (int j = nums.length - 1; j >= i; j--) {
+                    if (nums[j] > nums[i - 1]) {
+                        int temp = nums[i - 1];
+                        nums[i - 1] = nums[j];
+                        nums[j] = temp;
+                        reverse(nums, i, nums.length - 1);
+                        return;
+                    }
+                }
+            }
+        }
+        reverse(nums, 0, nums.length - 1);
+    }
+
+    public void reverse(int[] nums, int s, int e) {
+        while (s < e) {
+            int temp = nums[s];
+            nums[s] = nums[e];
+            nums[e] = temp;
+            s++;
+            e--;
+        }
+    }
+}
