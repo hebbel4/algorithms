@@ -31,3 +31,22 @@ class Solution {
         return added;
     }
 }
+
+199. Binary Tree Right Side View
+class Solution {
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+        dfs(res, root, 0);
+        return res;
+    }
+    public void dfs(List<Integer> res, TreeNode root, int level) {
+        if (root == null) return;
+        if (res.size() == level) {
+            res.add(root.val);
+        }
+
+        dfs(res, root.right, level + 1);
+        dfs(res, root.left, level + 1);
+    }
+}

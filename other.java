@@ -417,3 +417,125 @@ class Solution {
         return count;
     }
 }
+
+99. Recover Binary Search Tree
+class Solution {
+    TreeNode first = null;
+    TreeNode second = null;
+    TreeNode prev = new TreeNode(Integer.MIN_VALUE);
+
+    public void recoverTree(TreeNode root) {
+        if (root == null) return;
+
+        traverse(root);
+
+        int temp = first.val;
+        first.val = second.val;
+        second.val = temp;
+    }
+    private void traverse(TreeNode root) {
+        if (root == null) return;
+        traverse(root.left);
+
+        if (first == null && prev.val >= root.val) {
+            first = prev;
+        }
+        if (first != null && prev.val >= root.val) {
+            second = root;
+        }
+        prev = root;
+
+        traverse(root.right);
+    }
+
+}
+
+337. House Robber III
+class Solution {
+    HashMap<TreeNode, Integer> map = new HashMap<>();
+    public int rob(TreeNode root) {
+        if (map.containsKey(root)) return map.get(root);
+        if (root == null) return 0;
+
+        int res = 0;
+        if (root.left != null) {
+            res += rob(root.left.left) + rob(root.left.right);
+        }
+        if (root.right != null) {
+            res += rob(root.right.left) + rob(root.right.right);
+        }
+        res = Math.max(res + root.val, rob(root.left) + rob(root.right));
+        map.put(root, res);
+        return res;
+    }
+}
+
+207. Course Schedule
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        int[] indegree = new int[numCourses];
+        ArrayList<Integer>[] neighbours = new ArrayList[numCourses];
+        Queue<Integer> q = new LinkedList<>();
+
+        for (int i = 0; i < numCourses; i++) {
+            neighbours[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < prerequisites.length; i++) {
+            int[] cur = prerequisites[i];
+            indegree[cur[1]]++;
+            neighbours[cur[0]].add(cur[1]);
+        }
+        for (int i = 0; i < numCourses; i++) {
+            if (indegree[i] == 0) {
+                q.add(i);
+            }
+        }
+
+        while (!q.isEmpty()) {
+            int cur = q.poll();
+
+            for (int i = 0; i < neighbours[cur].size(); i++) {
+                indegree[neighbours[cur].get(i)]--;
+                if (indegree[neighbours[cur].get(i)] == 0) {
+                    q.add(neighbours[cur].get(i));
+                }
+            }
+        }
+        for (int i = 0; i < numCourses; i++) {
+            if (indegree[i] != 0) return false;
+        }
+        return true;
+
+    }
+}
+
+29. Divide Two Integers
+public class Solution {
+    public int divide(int dividend, int divisor) {
+        // check divisor == 0 || dividend == Integer.MAX_VALUE && divisor = -1
+        if (dividend == Integer.MIN_VALUE && divisor == -1 || divisor == 0) return Integer.MAX_VALUE;
+        // change to long
+        long m = Math.abs((long)dividend);
+        long n = Math.abs((long)divisor);
+        // get sign
+        int sign = (dividend < 0 && divisor < 0 || dividend > 0 && divisor > 0) ? 1 : -1;
+        int res = 0;
+        // check dividend == divisor and divisor == 1
+        if (n == 1) return (int)(sign * m);
+        if (m == n) return sign;
+
+        while (m > n) {
+            int p = 1;
+            long t = n;
+            while (m >= (t << 1)) {
+                t <<= 1;
+                p <<= 1;
+            }
+            res += p;
+            m -= t;
+        }
+
+        return sign * res;
+
+    }
+}

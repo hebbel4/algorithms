@@ -32,3 +32,21 @@ class Solution {
         return res;
     }
 }
+
+339. Nested List Weight Sum
+public class Solution {
+    public int depthSum(List<NestedInteger> nestedList) {
+        return dfs(nestedList, 1);
+    }
+    private int dfs(List<NestedInteger> nestedList, int depth) {
+        int res = 0;
+        for (NestedInteger n : nestedList) {
+            if (n.isInteger()) {
+                res += n.getInteger() * depth;
+            }else {
+                res += dfs(n.getList(), depth + 1);
+            }
+        }
+        return res;
+    }
+}

@@ -271,3 +271,131 @@ class Solution {
         }
     }
 }
+
+394. Decode String
+/* recursion */
+class Solution {
+    public String decodeString(String s) {
+        if (s.length() == 0) return "";
+        StringBuilder res = new StringBuilder();
+        int num = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (Character.isLetter(s.charAt(i))) {
+                res.append(s.charAt(i));
+            }else if (Character.isDigit(s.charAt(i))) {
+                num = num * 10 + s.charAt(i) - '0';
+            }else if (s.charAt(i) == '[') {
+                int start = i;
+                int count = 1;
+                i++;
+                while (count != 0) {
+                    if (s.charAt(i) == '[') {
+                        count++;
+                    }
+                    if (s.charAt(i) == ']') {
+                        count--;
+                    }
+                    i++;
+                }
+                i--;
+                String subS = decodeString(s.substring(start + 1, i));
+                for (int k = 0; k < num; k++) {
+                    res.append(subS);
+                }
+                num = 0;
+            }
+        }
+        return res.toString();
+    }
+}
+/* stack */
+class Solution {
+    public String decodeString(String s) {
+        Stack<Integer> countStack = new Stack<>();
+        Stack<String> strStack = new Stack<>();
+        int ind = 0;
+        String res = "";
+        while (ind < s.length()) {
+            if (Character.isDigit(s.charAt(ind))) {
+                int num = 0;
+                while (Character.isDigit(s.charAt(ind))) {
+                    num = num * 10 + s.charAt(ind) - '0';
+                    ind++;
+                }
+                countStack.push(num);
+            }else if (Character.isLetter(s.charAt(ind))) {
+                res += s.charAt(ind);
+                ind++;
+            }else if (s.charAt(ind) == '[') {
+                strStack.push(res);
+                res = "";
+                ind++;
+            }else if (s.charAt(ind) == ']') {
+                String last = strStack.pop();
+                int times = countStack.pop();
+                for (int i = 0; i < times; i++) {
+                    last += res;
+                }
+                res = last;
+                ind++;
+            }
+        }
+        return res;
+    }
+}
+
+329. Longest Increasing Path in a Matrix
+class Solution {
+    public int longestIncreasingPath(int[][] matrix) {
+        if (matrix.length == 0 || matrix[0].length == 0) return 0;
+        int[][] dp = new int[matrix.length][matrix[0].length];
+        int max = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                max = Math.max(max, dfs(matrix, i, j, dp));
+            }
+        }
+        return max;
+    }
+    private int dfs(int[][] matrix, int i, int j, int[][] dp) {
+        if (dp[i][j] != 0) return dp[i][j];
+        int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        int mx = 1;
+        for (int[] dir : directions) {
+            int m = i + dir[0];
+            int n = j + dir[1];
+            if (m < 0 || m >= matrix.length || n < 0 || n >= matrix[0].length || matrix[m][n] <= matrix[i][j]) continue;
+            mx = Math.max(mx, 1 + dfs(matrix, m, n, dp));
+        }
+        dp[i][j] = mx;
+        return dp[i][j];
+
+    }
+}
+
+332. Reconstruct Itinerary
+class Solution {
+    public List<String> findItinerary(String[][] tickets) {
+        Map<String, PriorityQueue<String>> map = new HashMap<>();
+        for (String[] str : tickets) {
+            map.computeIfAbsent(str[0], k -> new PriorityQueue<>()).add(str[1]);
+        }
+        List<String> res = new ArrayList<>();
+        visit("JFK", res, map);
+        reverse(res);
+        return res;
+    }
+    private void visit(String input, List<String> res, Map<String, PriorityQueue<String>> map) {
+        while (map.containsKey(input) && map.get(input).peek() != null) {
+            visit(map.get(input).poll(), res, map);
+        }
+        res.add(input);
+    }
+    private void reverse(List<String> res) {
+        for (int i = 0; i < res.size() / 2; i++) {
+            String temp = res.get(i);
+            res.set(i, res.get(res.size() - 1 - i));
+            res.set(res.size() - 1 - i, temp);
+        }
+    }
+}
