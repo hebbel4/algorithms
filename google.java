@@ -374,6 +374,7 @@ class Solution {
 }
 
 332. Reconstruct Itinerary
+/* recursion */
 class Solution {
     public List<String> findItinerary(String[][] tickets) {
         Map<String, PriorityQueue<String>> map = new HashMap<>();
@@ -397,5 +398,24 @@ class Solution {
             res.set(i, res.get(res.size() - 1 - i));
             res.set(res.size() - 1 - i, temp);
         }
+    }
+}
+/* iteration */
+class Solution {
+    public List<String> findItinerary(String[][] tickets) {
+        Map<String, PriorityQueue<String>> map = new HashMap<>();
+        for (String[] str : tickets) {
+            map.computeIfAbsent(str[0], k -> new PriorityQueue<>()).add(str[1]);
+        }
+        List<String> res = new ArrayList<>();
+        Stack<String> stack = new Stack<>();
+        stack.push("JFK");
+        while (!stack.isEmpty()) {
+            while (map.containsKey(stack.peek()) && map.get(stack.peek()).peek() != null) {
+                stack.push(map.get(stack.peek()).poll());
+            }
+            res.add(0, stack.pop());
+        }
+        return res;
     }
 }

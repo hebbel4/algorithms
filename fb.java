@@ -1153,3 +1153,26 @@ class Solution {
         return 0;
     }
 }
+
+117. Populating Next Right Pointers in Each Node II
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        if (root == null) return;
+        while (root != null) {
+            TreeLinkNode dummyHead = new TreeLinkNode(0);
+            TreeLinkNode dummy = dummyHead;
+            while (root != null) {
+                if (root.left != null) {
+                    dummy.next = root.left;
+                    dummy = dummy.next;
+                }
+                if (root.right != null) {
+                    dummy.next = root.right;
+                    dummy = dummy.next;
+                }
+                root = root.next;
+            }
+            root = dummyHead.next;
+        }
+    }
+}
