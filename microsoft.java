@@ -141,6 +141,7 @@ public class Solution {
         int i = 0;
         String result = "";
         while (num > 0) {
+            //check 1000,000 如果不是num % 1000 != 0 就会变成one million thousand
             if (num % 1000 != 0) {
                 result = helper(num % 1000) + THOUSANDS[i] + " " + result;
             }
@@ -176,18 +177,20 @@ public List<Integer> spiralOrder(int[][] matrix) {
             result.add(matrix[i][ce]);
         }
         ce--;
-        if (rs <= re && cs <= ce) {
+        if (rs <= re) {
+            //如果不加if[[2, 3]] 会变成[2, 3, 2]
             for (int i = ce; i >= cs; i--) {
                 result.add(matrix[re][i]);
             }
         }
-        re--;
-        if (rs <= re && cs <= ce) {
+        re--;//放if里面外面都行
+        if (cs <= ce) {
+            //如果不加if[[7], [9], [6]]会变成 [7, 9, 6, 9]
             for (int i = re; i >= rs; i--) {
                 result.add(matrix[i][cs]);
             }
         }
-        cs++;
+        cs++;//放if里面外面都行
     }
     return result;
 }
@@ -343,6 +346,7 @@ public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         if(!stack2.isEmpty()){
             sum += stack2.pop();
         }
+
         ListNode next = new ListNode(sum / 10);
         head.val = sum % 10;
         next.next = head;
@@ -955,6 +959,21 @@ public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
     if (l1 != null) dummyHead.next = l1;
     if (l2 != null) dummyHead.next = l2;
     return dummy.next;
+}
+/* recursion */
+class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if (l1 == null) return l2;
+        if (l2 == null) return l1;
+        if (l1.val < l2.val) {
+            l1.next = mergeTwoLists(l1.next, l2);
+            return l1;
+        }else {
+            l2.next = mergeTwoLists(l1, l2.next);
+            return l2;
+
+        }
+    }
 }
 
 174. Dungeon Game
