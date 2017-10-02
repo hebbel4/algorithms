@@ -1125,12 +1125,12 @@ class LFUCache {
 }
 
 8. String to Integer (atoi)
-/* eg. +-2 */
 public int myAtoi(String str) {
     if (str == null || str.length() == 0) return 0;
     long res = 0;
     int sign = 1;
     int ind = 0;
+    // "     010"
     str = str.trim();
     if (str.charAt(0) == '+') {
         ind++;
@@ -1140,6 +1140,7 @@ public int myAtoi(String str) {
         ind++;
     }
     while (ind < str.length()) {
+        /* eg. +-2 */
         if (!Character.isDigit(str.charAt(ind))) {
             return (int) res*sign;
         }
@@ -1293,6 +1294,44 @@ private int helper(int[] nums, int start, int end) {
 }
 
 212. Word Search II
+/* brute force */
+class Solution {
+    public List<String> findWords(char[][] board, String[] words) {
+        List<String> res = new ArrayList<>();
+        if (board.length == 0 || board[0].length == 0 || words.length == 0) return res;
+        boolean[][] visited = new boolean[board.length][board[0].length];
+        for (String s : words) {
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board[0].length; j++) {
+                    if (board[i][j] == s.charAt(0)) {
+                        dfs(res, board, i, j, s, 0, visited);
+                    }
+                }
+            }
+        }
+        return res;
+    }
+    public void dfs(List<String> res, char[][] board, int i, int j, String s, int ind, boolean[][] visited) {
+        if (ind == s.length()) {
+            if (!res.contains(s)) res.add(s);
+            return;
+        }
+        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length) return;
+        if (s.charAt(ind) != board[i][j]) return;
+        if (visited[i][j]) return;
+
+        visited[i][j] = true;
+
+        dfs(res, board, i + 1, j, s, ind + 1, visited);
+        dfs(res, board, i - 1, j, s, ind + 1, visited);
+        dfs(res, board, i, j + 1, s, ind + 1, visited);
+        dfs(res, board, i, j - 1, s, ind + 1, visited);
+
+        visited[i][j] = false;
+
+    }
+}
+/* DFS + Trie */
 class TrieNode {
     String word;
     TrieNode[] children = new TrieNode[26];
