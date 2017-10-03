@@ -1276,21 +1276,22 @@ private ListNode merge(ListNode n1, ListNode n2) {
 }
 
 213. House Robber II
-public int rob(int[] nums) {
-    if (nums.length == 1) return nums[0];
-    int n1 = helper(nums, 0, nums.length - 2);
-    int n2 = helper(nums, 1, nums.length - 1);
-    return Math.max(n1, n2);
-}
-private int helper(int[] nums, int start, int end) {
-    int rob = 0;
-    int notRob = 0;
-    for (int i = start; i <= end; i++) {
-        int temp = rob;
-        rob = notRob + nums[i];
-        notRob = Math.max(notRob, temp);
+class Solution {
+    public int rob(int[] nums) {
+        if (nums.length == 0) return 0;
+        if (nums.length == 1) return nums[0];
+        return Math.max(helper(nums, 0, nums.length - 2), helper(nums, 1, nums.length - 1));
     }
-    return Math.max(rob, notRob);
+    public int helper(int[] nums, int start, int end) {
+        int rob = nums[start];
+        int notRob = 0;
+        for (int i = start + 1; i <= end; i++) {
+            int temp = rob;
+            rob = notRob + nums[i];
+            notRob = Math.max(temp, notRob);
+        }
+        return Math.max(rob, notRob);
+    }
 }
 
 212. Word Search II
@@ -2112,6 +2113,47 @@ class Solution {
         return Math.max(left, right) + root.val;
     }
 }
+// Version 2:
+// SinglePath也定义为，至少包含一个点。
+public class Solution {
+    /**
+     * @param root: The root of binary tree.
+     * @return: An integer.
+     */
+    private class ResultType {
+        int singlePath, maxPath;
+        ResultType(int singlePath, int maxPath) {
+            this.singlePath = singlePath;
+            this.maxPath = maxPath;
+        }
+    }
+
+    private ResultType helper(TreeNode root) {
+        if (root == null) {
+            return new ResultType(Integer.MIN_VALUE, Integer.MIN_VALUE);
+        }
+        // Divide
+        ResultType left = helper(root.left);
+        ResultType right = helper(root.right);
+
+        // Conquer
+        int singlePath =
+            Math.max(0, Math.max(left.singlePath, right.singlePath)) + root.val;
+
+        int maxPath = Math.max(left.maxPath, right.maxPath);
+        maxPath = Math.max(maxPath,
+                           Math.max(left.singlePath, 0) +
+                           Math.max(right.singlePath, 0) + root.val);
+
+        return new ResultType(singlePath, maxPath);
+    }
+
+    public int maxPathSum(TreeNode root) {
+        ResultType result = helper(root);
+        return result.maxPath;
+    }
+
+}
 
 300. Longest Increasing Subsequence
 public int lengthOfLIS(int[] nums) {
@@ -2474,5 +2516,43 @@ class Solution {
         else if (m == 2) return 7;
         else return 8;
 
+    }
+}
+
+591. Tag Validator
+class Solution {
+    public boolean isValid(String code) {
+        if (code.length() == 0) return true;
+        Stack<String> stack = new Stack<String>();
+        for (int i = 0; i < code.length(); i++) {
+            //开头结尾不是标签的情况，以及没有标签的情况，和开头的标签在中间就闭合了情况等等
+            if (i > 0 && stack.isEmpty()) return false;
+            if (code.startsWith("<![CDATA[", i)) {
+                int j = i + 9;
+                i = code.indexOf("]]>", j);
+                //j = 9 means the string starts with CONTENT
+                if (i < 0 || j == 9) return false;
+                i += 2;
+            }else if (code.startsWith("</", i)) {
+                int j = i + 2;
+                i = code.indexOf(">", j);
+                //<DIV><></></DIV> cannot be empty
+                if (i < 0 || i - j > 9 || i == j) return false;
+                for (int k = j; k < i; k++) {
+                    if (!Character.isUpperCase(code.charAt(k))) return false;
+                }
+                if (stack.isEmpty() || !stack.pop().equals(code.substring(j, i))) return false;
+            }else if (code.startsWith("<", i)) {
+                int j = i + 1;
+                i = code.indexOf(">", j);
+                if (i < 0 || i - j > 9 || i == j) return false;
+                for (int k = j; k < i; k++) {
+                    if (!Character.isUpperCase(code.charAt(k))) return false;
+                }
+                String s = code.substring(j, i);
+                stack.push(s);
+            }
+        }
+        return stack.isEmpty();
     }
 }
