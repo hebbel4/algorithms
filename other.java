@@ -357,6 +357,7 @@ class Solution {
         }
         for (int col = 0; col < n; col++) {
             boolean foundSafe = true;
+            //check previous queens and see whether they are under attack
             for (int queen = 0; queen < row; queen++) {
                 if (positions[queen].col == col || positions[queen].row - positions[queen].col == row - col || positions[queen].row + positions[queen].col == row + col) {
                     foundSafe = false;
