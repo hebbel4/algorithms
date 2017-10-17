@@ -419,3 +419,52 @@ class Solution {
         return res;
     }
 }
+
+42. Trapping Rain Water
+/* use a dp array to record a max from left to right, then from right to left */
+class Solution {
+    public int trap(int[] height) {
+        if (height.length == 0) return 0;
+        int[] dp = new int[height.length];
+        int max = height[0];
+        for (int i = 0; i < height.length; i++) {
+            max = Math.max(max, height[i]);
+            dp[i] = max;
+        }
+        max = height[height.length - 1];
+        int res = 0;
+        for (int i = height.length - 1; i >= 0; i--) {
+            max = Math.max(max, height[i]);
+            if (Math.min(max, dp[i]) > height[i]) {
+                res += Math.min(max, dp[i]) - height[i];
+            }
+        }
+        return res;
+    }
+}
+/* 只需一次loop，找头尾最小值，如果当前比最小值小，加进result */
+class Solution {
+    public int trap(int[] height) {
+        if (height.length == 0) return 0;
+        int start = 0;
+        int end = height.length - 1;
+        int res = 0;
+        while (start < end) {
+            int min = Math.min(height[start], height[end]);
+            if (min == height[start]) {
+                start++;
+                while (start < end && height[start] < min) {
+                    res += min - height[start];
+                    start++;
+                }
+            }else {
+                end--;
+                while (start < end && height[end] < min) {
+                    res += min - height[end];
+                    end--;
+                }
+            }
+        }
+        return res;
+    }
+}
